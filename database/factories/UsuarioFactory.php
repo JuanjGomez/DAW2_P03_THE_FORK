@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Usuario;
+use App\Models\Rol;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 
@@ -24,7 +25,7 @@ class UsuarioFactory extends Factory
             'username' => $this->faker->unique()->userName,
             'email' => $this->faker->unique()->safeEmail,
             'password' => Hash::make('password'),
-            'rol_id' => \App\Models\Rol::factory(),
+            'rol_id' => Rol::inRandomOrder()->first()->id,
         ];
     }
 }

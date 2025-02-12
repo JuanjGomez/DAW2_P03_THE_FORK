@@ -14,6 +14,10 @@ class RolSeeder extends Seeder
 
     public function run(): void
     {
-        Rol::factory()->count(3)->create();
+        $roles = ['admin', 'gerente', 'standard'];
+
+        foreach ($roles as $rol){
+            Rol::firstOrCreate(['rol' => $rol]);
+        }
     }
 }
