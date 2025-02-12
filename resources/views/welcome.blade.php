@@ -28,9 +28,11 @@
                         <div class="search-form">
                             <input type="text" placeholder="Localidad" class="search-input">
                             <input type="text" placeholder="Nombre del restaurante" class="search-input">
-                            <button class="search-button">
-                                Buscar
-                            </button>
+                            <a href="{{ route('login') }}">
+                                <button class="search-button">
+                                    Buscar
+                                </button>
+                            </a>
                         </div>
                     </div>
                     <img src="{{ asset('images/restaurante.png') }}" alt="Restaurante">
