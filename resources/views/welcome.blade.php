@@ -43,7 +43,14 @@
         <!-- Popular Restaurants Section -->
         <div class="popular-restaurants">
             <h2 class="popular-title">Restaurantes populares en Barcelona</h2>
-            <!-- Aquí puedes agregar la lista de restaurantes -->
+            <div class="restaurant-list">
+                @foreach($restaurantes as $restaurante)
+                    <a href="{{ route('login') }}" class="restaurant-item">
+                        <img src="{{ asset('images/restaurantes/' . $restaurante->imagen) }}" alt="{{ $restaurante->nombre_r }}" class="restaurant-image">
+                        <div class="restaurant-name">{{ $restaurante->nombre_r }}</div>
+                    </a>
+                @endforeach
+            </div>
         </div>
     </body>
 </html>

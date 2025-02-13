@@ -75,4 +75,14 @@ class AuthController extends Controller
         // Redirigir al usuario al login
         return redirect('/home');
     }
+
+    public function showWelcomePage()
+    {
+        $restaurantes = \App\Models\Restaurante::where('municipio', 'Barcelona')
+            ->orderBy('precio_promedio', 'desc')
+            ->take(5)
+            ->get();
+
+        return view('welcome', ['restaurantes' => $restaurantes]);
+    }
 }
