@@ -6,11 +6,14 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>{{ $restaurante->nombre_r }} - The Fork</title>
     @vite(['resources/css/app.css', 'resources/css/custom.css', 'resources/js/app.js', 'resources/js/rating.js'])
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 <body>
     <!-- Header -->
     <header class="header">
-        <img src="{{ asset('images/TheFork.png') }}" alt="Logo de The Fork" class="logo">
+        <a href="{{ route('principal') }}">
+            <img src="{{ asset('images/TheFork.png') }}" alt="Logo de The Fork" class="logo">
+        </a>
         <h1 class="restaurant-title">{{ $restaurante->nombre_r }}</h1>
         <div class="user-menu">
             <img src="{{ asset('images/user.png') }}" alt="Foto de usuario" class="user-logo">
@@ -59,9 +62,6 @@
                     </div>
                     <div class="rating-buttons">
                         <button type="submit" class="submit-rating">Enviar valoración y comentario</button>
-                        @if($userRating)
-                            <button type="button" class="delete-rating" data-id="{{ $userRating->id }}">Eliminar mi opinión</button>
-                        @endif
                     </div>
                 </form>
             </div>
