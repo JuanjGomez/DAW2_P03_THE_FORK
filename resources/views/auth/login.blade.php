@@ -8,35 +8,49 @@
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
     <!-- Styles / Scripts -->
-    @vite(['resources/css/app.css', 'resources/css/custom.css', 'resources/js/app.js'])
-    <link rel="stylesshet" href="{{asset('css/')}}">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.16.0/dist/sweetalert2.min.css" integrity="sha256-YiFT9lvNOGMbi29lCphiiB6iZOnEnj6SJ4R6Y1n8ukM=" crossorigin="anonymous">
-    <title>Login</title>
+    @vite(['resources/css/app.css', 'resources/css/custom.css', 'resources/css/formLogin.css', 'resources/js/app.js'])
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.16.0/dist/sweetalert2.min.css">
+    <title>Login - The Fork</title>
 </head>
-<body style="font-family: 'Figtree', sans-serif; -webkit-font-smoothing: antialiased;">
-    <h1>Login</h1>
-    <form method="POST" action="{{ route('login') }}">
-        @csrf
-        <div>
-            <label for="email">Email:</label>
-            <input type="email" name="email" id="email" placeholder="example@gmail.com">
-            <span id="errorEmail"></span>
+<body id="body">
+    <div class="login-container">
+        <div class="images-container">
+            <img src="{{ asset('images/TheFork_blanco.png') }}" alt="The Fork Logo" class="logo-login">
+            <div class="circular-image">
+                <img src="{{ asset('images/restaurante.png') }}" alt="Plato de comida">
+            </div>
         </div>
-        <div>
-            <label for="password">Password:</label>
-            <input type="password" name="password" id="password" placeholder="asdASD123">
-            <span id="errorPwd"></span>
+
+        <div class="form-container">
+            <form method="POST" action="{{ route('login') }}" class="login-form">
+                @csrf
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" name="email" id="email" placeholder="example@gmail.com">
+                    <span id="errorEmail" class="error-message"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Contraseña:</label>
+                    <input type="password" name="password" id="password" placeholder="asdASD123">
+                    <span id="errorPwd" class="error-message"></span>
+                </div>
+
+                <div class="form-group">
+                    <button type="submit" id="btnSesion" disabled>ENTRAR</button>
+                    <a href="{{ route('register') }}" class="register-link">¿No tienes una cuenta? Regístrate</a>
+                </div>
+
+                @if ($errors->any())
+                    <script>
+                        let errorMessage = "{{$errors->first()}}";
+                    </script>
+                @endif
+            </form>
         </div>
-        <div>
-            <button type="submit" id="btnSesion" disabled>Login</button>
-        </div>
-        @if ($errors->any())
-            <script>
-                let errorMessage = "{{$errors->first()}}";
-            </script>
-        @endif
-    </form>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.16.0/dist/sweetalert2.all.min.js" integrity="sha256-JxrPeaXEC22LUNm25PF02qeQ756a2XN/mxPJlfk9Lb8=" crossorigin="anonymous"></script>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.16.0/dist/sweetalert2.all.min.js"></script>
     <script src="{{asset('js/formLoginVali.js')}}"></script>
 </body>
 </html>

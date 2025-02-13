@@ -7,6 +7,7 @@ export default defineConfig({
             input: [
                 'resources/css/app.css',
                 'resources/css/custom.css',
+                'resources/css/formLogin.css',
                 'resources/js/app.js'
             ],
             refresh: true,
