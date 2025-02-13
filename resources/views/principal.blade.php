@@ -9,10 +9,6 @@
     @vite(['resources/css/app.css', 'resources/css/custom.css', 'resources/js/app.js'])
 </head>
 <body>
-    <form method="post" action="{{ route('logout') }}">
-        @csrf
-        <button type="submit">Cerrar Sesión</button>
-    </form>
     @if (session('success'))
         <script>
             window.successMessage = "{{ session('success') }}";
@@ -24,21 +20,32 @@
     <!-- Header -->
     <header class="header">
         <img src="{{ asset('images/TheFork.png') }}" alt="Logo de The Fork" class="logo">
-        <div class="filters">
-            <input type="text" placeholder="Nombre del restaurante" class="filter-input">
-            <select class="filter-input">
-                <option value="">Tipo de comida</option>
-                <!-- Aquí puedes agregar opciones dinámicas desde la base de datos -->
+        <form method="GET" action="{{ route('principal') }}" class="filters">
+            <input type="text" name="nombre" placeholder="Nombre del restaurante" class="filter-input" value="{{ request('nombre') }}">
+            <input type="text" name="tipo_comida" placeholder="Tipo de comida" class="filter-input" value="{{ request('tipo_comida') }}">
+            <div class="price-range">
+                <input type="number" name="precio_min" placeholder="Precio min" class="filter-input price-input" value="{{ request('precio_min') }}">
+                <span>-</span>
+                <input type="number" name="precio_max" placeholder="Precio max" class="filter-input price-input" value="{{ request('precio_max') }}">
+            </div>
+            <select name="municipio" class="filter-input">
+                <option value="">Selecciona un municipio</option>
+                @foreach($municipios as $municipio)
+                    <option value="{{ $municipio }}" {{ request('municipio') == $municipio ? 'selected' : '' }}>{{ $municipio }}</option>
+                @endforeach
             </select>
-            <select class="filter-input">
-                <option value="">Precio</option>
-                <option value="1">€</option>
-                <option value="2">€€</option>
-                <option value="3">€€€</option>
-            </select>
-            <input type="text" placeholder="Municipio" class="filter-input">
+            <button type="submit" class="search-button">Buscar</button>
+        </form>
+        <div class="user-menu">
+            <img src="{{ asset('images/user.png') }}" alt="Foto de usuario" class="user-logo">
+            <div class="dropdown-menu">
+                <a href="{{ route('perfil') }}">Perfil</a>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit">Log out</button>
+                </form>
+            </div>
         </div>
-        <img src="{{ asset('images/user.png') }}" alt="Foto de usuario" class="user-logo">
     </header>
 
     <!-- Restaurantes -->
@@ -57,6 +64,10 @@
                 </div>
             </a>
         @endforeach
+    </div>
+
+    <div class="pagination">
+        {{ $restaurantes->appends(request()->query())->links('pagination::bootstrap-4') }}
     </div>
 </body>
 </html>

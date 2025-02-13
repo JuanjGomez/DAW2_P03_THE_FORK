@@ -29,3 +29,5 @@ Route::middleware(['auth'])->group(function () {
 // ------------------------------------------------------------------------------------------------------------------------
 
 Route::get('/restaurante/{id}', [AuthController::class, 'showRestaurantePage'])->name('restaurante');
+
+Route::get('/perfil', [AuthController::class, 'showPerfilPage'])->name('perfil');

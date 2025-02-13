@@ -101,19 +101,49 @@ class AuthController extends Controller
         return view('welcome', ['restaurantes' => $restaurantes]);
     }
 
-    public function showPrincipalPage()
+    public function showPrincipalPage(Request $request)
     {
-        $restaurantes = \App\Models\Restaurante::with(['tipoCocina', 'ratings'])
-            ->orderBy('precio_promedio', 'desc')
-            ->take(4)
-            ->get();
+        $query = \App\Models\Restaurante::with(['tipoCocina', 'ratings']);
 
-        return view('principal', ['restaurantes' => $restaurantes]);
+        if ($request->has('nombre') && $request->nombre != '') {
+            $query->where('nombre_r', 'like', '%' . $request->nombre . '%');
+        }
+
+        if ($request->has('tipo_comida') && $request->tipo_comida != '') {
+            $query->whereHas('tipoCocina', function($q) use ($request) {
+                $q->where('nombre', 'like', '%' . $request->tipo_comida . '%');
+            });
+        }
+
+        if ($request->has('precio_min') && $request->precio_min != '') {
+            $query->where('precio_promedio', '>=', $request->precio_min);
+        }
+
+        if ($request->has('precio_max') && $request->precio_max != '') {
+            $query->where('precio_promedio', '<=', $request->precio_max);
+        }
+
+        if ($request->has('municipio') && $request->municipio != '') {
+            $query->where('municipio', $request->municipio);
+        }
+
+        $restaurantes = $query->orderBy('precio_promedio', 'desc')->paginate(10);
+        $municipios = \App\Models\Restaurante::distinct()->pluck('municipio');
+
+        return view('principal', [
+            'restaurantes' => $restaurantes,
+            'municipios' => $municipios
+        ]);
     }
 
     public function showRestaurantePage($id)
     {
         $restaurante = \App\Models\Restaurante::with(['tipoCocina', 'ratings'])->findOrFail($id);
         return view('restaurante', ['restaurante' => $restaurante]);
+    }
+
+    public function showPerfilPage()
+    {
+        return view('perfil');
     }
 }
