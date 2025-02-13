@@ -21,20 +21,27 @@
     <header class="header">
         <img src="{{ asset('images/TheFork.png') }}" alt="Logo de The Fork" class="logo">
         <form method="GET" action="{{ route('principal') }}" class="filters">
-            <input type="text" name="nombre" placeholder="Nombre del restaurante" class="filter-input" value="{{ request('nombre') }}">
-            <input type="text" name="tipo_comida" placeholder="Tipo de comida" class="filter-input" value="{{ request('tipo_comida') }}">
+            <input type="text" name="nombre" placeholder="Nombre" class="filter-input" value="{{ request('nombre') }}">
+            <input type="text" name="tipo_comida" placeholder="Tipo" class="filter-input" value="{{ request('tipo_comida') }}">
             <div class="price-range">
-                <input type="number" name="precio_min" placeholder="Precio min" class="filter-input price-input" value="{{ request('precio_min') }}">
+                <input type="number" name="precio_min" placeholder="Min" class="filter-input price-input" value="{{ request('precio_min') }}">
                 <span>-</span>
-                <input type="number" name="precio_max" placeholder="Precio max" class="filter-input price-input" value="{{ request('precio_max') }}">
+                <input type="number" name="precio_max" placeholder="Max" class="filter-input price-input" value="{{ request('precio_max') }}">
             </div>
             <select name="municipio" class="filter-input">
-                <option value="">Selecciona un municipio</option>
+                <option value="">Municipio</option>
                 @foreach($municipios as $municipio)
                     <option value="{{ $municipio }}" {{ request('municipio') == $municipio ? 'selected' : '' }}>{{ $municipio }}</option>
                 @endforeach
             </select>
+            <select name="valoracion_min" class="filter-input">
+                <option value="">⭐ Min</option>
+                @for ($i = 1; $i <= 5; $i++)
+                    <option value="{{ $i }}" {{ request('valoracion_min') == $i ? 'selected' : '' }}>{{ $i }}</option>
+                @endfor
+            </select>
             <button type="submit" class="search-button">Buscar</button>
+            <a href="{{ route('principal') }}" class="clear-filters-button">Borrar filtros</a>
         </form>
         <div class="user-menu">
             <img src="{{ asset('images/user.png') }}" alt="Foto de usuario" class="user-logo">

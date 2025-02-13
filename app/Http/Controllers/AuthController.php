@@ -131,6 +131,14 @@ class AuthController extends Controller
             $query->where('municipio', $request->municipio);
         }
 
+        if ($request->has('valoracion_min') && $request->valoracion_min != '') {
+            $query->whereHas('ratings', function($q) use ($request) {
+                $q->select('restaurante_id')
+                  ->groupBy('restaurante_id')
+                  ->havingRaw('AVG(rating) >= ?', [$request->valoracion_min]);
+            });
+        }
+
         $restaurantes = $query->orderBy('precio_promedio', 'desc')->paginate(10);
         $municipios = \App\Models\Restaurante::distinct()->pluck('municipio');
 
@@ -182,24 +190,5 @@ class AuthController extends Controller
         }
 
         return redirect()->back()->with('success', 'Gracias por tu valoración!');
-    }
-
-    public function deleteRating($id)
-    {
-        $rating = Rating::findOrFail($id);
-
-        if ($rating->user_id === auth()->id()) {
-            $rating->delete();
-            return redirect()->back()->with('success', 'Tu opinión ha sido eliminada.');
-        }
-
-        return redirect()->back()->with('error', 'No tienes permiso para eliminar esta opinión.');
-    }
-
-    // Mostrar lista de restaurantes
-    public function index()
-    {
-        $restaurantes = Restaurante::all();
-        return view('admin.restaurantes.index', compact('restaurantes'));
     }
 }
