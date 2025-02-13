@@ -6,7 +6,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Usuario;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\ValidationException;
+use App\Models\Restaurante;
+use App\Models\Rating;
+
 class AuthController extends Controller
 {
     // Muestra el login
@@ -38,7 +42,7 @@ class AuthController extends Controller
             session()->flash('success', "Bienvenido $username!");
 
             // Redirige segun el rol del usuario
-            return ($rol_id == 1) ? redirect()->route('restaurantes.index') : redirect()->route('principal');
+            return ($rol_id == 1) ? redirect()->route('admin.restaurantes.index') : redirect()->route('principal');
         }
 
         // Si la autenticación falla, redirige de vuelta con un mensaje de error
@@ -58,7 +62,7 @@ class AuthController extends Controller
         // Validar los datos del formulario
         $request->validate([
             'username' => 'required|string|max:30',
-            'email' => 'required|string|email|max:120|unique:users',
+            'email' => 'required|string|email|max:120|unique:usuarios',
             'password' => 'required|string|min:8|confirmed',
         ]);
 
@@ -67,12 +71,18 @@ class AuthController extends Controller
             'username' => $request->username,
             'email'=> $request->email,
             'password' => Hash::make($request->password),
+            'rol_id' => 3, // Asignacion del rol de standard
         ]);
 
+        $username = $usuario->username;
+
         // Autenticar al usuario y redirigir
-        // Auth::login($usuario);
+        Auth::login($usuario);
+        // Anadir mensaje de extio en la sesion
+        session()->flash('success', "Bienvenido $username!");
         return redirect()->route('principal');
     }
+
 
     public function Logout(Request $request){
         // Cerrar sesión
@@ -81,7 +91,115 @@ class AuthController extends Controller
         $request->session()->invalidate();
         // Eliminar la cookie de sesión para que expire
         $request->session()->regenerateToken();
-        // Redirigir al usuario al login
-        return redirect('/home');
+        // Redirigir al usuario al home
+        return redirect('/');
+    }
+
+    public function showWelcomePage()
+    {
+        $restaurantes = \App\Models\Restaurante::where('municipio', 'Barcelona')
+            ->orderBy('precio_promedio', 'desc')
+            ->take(5)
+            ->get();
+
+        return view('welcome', ['restaurantes' => $restaurantes]);
+    }
+
+    public function showPrincipalPage(Request $request)
+    {
+        $query = \App\Models\Restaurante::with(['tipoCocina', 'ratings']);
+
+        if ($request->has('nombre') && $request->nombre != '') {
+            $query->where('nombre_r', 'like', '%' . $request->nombre . '%');
+        }
+
+        if ($request->has('tipo_comida') && $request->tipo_comida != '') {
+            $query->whereHas('tipoCocina', function($q) use ($request) {
+                $q->where('nombre', 'like', '%' . $request->tipo_comida . '%');
+            });
+        }
+
+        if ($request->has('precio_min') && $request->precio_min != '') {
+            $query->where('precio_promedio', '>=', $request->precio_min);
+        }
+
+        if ($request->has('precio_max') && $request->precio_max != '') {
+            $query->where('precio_promedio', '<=', $request->precio_max);
+        }
+
+        if ($request->has('municipio') && $request->municipio != '') {
+            $query->where('municipio', $request->municipio);
+        }
+
+        $restaurantes = $query->orderBy('precio_promedio', 'desc')->paginate(10);
+        $municipios = \App\Models\Restaurante::distinct()->pluck('municipio');
+
+        return view('principal', [
+            'restaurantes' => $restaurantes,
+            'municipios' => $municipios
+        ]);
+    }
+
+    public function showRestaurantePage($id)
+    {
+        $restaurante = \App\Models\Restaurante::with(['tipoCocina', 'ratings'])->findOrFail($id);
+        $userRating = $restaurante->ratings()->where('user_id', auth()->id())->first();
+
+        return view('restaurante', [
+            'restaurante' => $restaurante,
+            'userRating' => $userRating,
+        ]);
+    }
+
+    public function showPerfilPage()
+    {
+        return view('perfil');
+    }
+
+    public function rateRestaurante(Request $request, $id)
+    {
+        $request->validate([
+            'rating' => 'required|integer|between:1,5',
+            'comentario' => 'nullable|string|max:500',
+        ]);
+
+        $restaurante = Restaurante::findOrFail($id);
+        $user = auth()->user();
+
+        $rating = $restaurante->ratings()->where('user_id', $user->id)->first();
+
+        if ($rating) {
+            $rating->update([
+                'rating' => $request->rating,
+                'comentario' => $request->comentario ?? $rating->comentario,
+            ]);
+        } else {
+            $restaurante->ratings()->create([
+                'user_id' => $user->id,
+                'rating' => $request->rating,
+                'comentario' => $request->comentario ?? '',
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'Gracias por tu valoración!');
+    }
+
+    public function deleteRating($id)
+    {
+        $rating = Rating::findOrFail($id);
+
+        if ($rating->user_id === auth()->id()) {
+            $rating->delete();
+            return redirect()->back()->with('success', 'Tu opinión ha sido eliminada.');
+        }
+
+        return redirect()->back()->with('error', 'No tienes permiso para eliminar esta opinión.');
+    }
+
+    // Mostrar lista de restaurantes
+    public function index()
+    {
+        $restaurantes = Restaurante::all();
+        return view('admin.restaurantes.index', compact('restaurantes'));
     }
 }
