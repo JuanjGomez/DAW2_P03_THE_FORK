@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\RestauranteController;
 
 Route::get('/', [AuthController::class, 'showWelcomePage'])->name('home');
 
@@ -25,6 +26,17 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::middleware(['auth'])->group(function () {
     // Principal
     Route::get('/principal', [AuthController::class, 'showPrincipalPage'])->name('principal');
+
+    // Rutas de administración de restaurantes (solo para admins)
+    Route::middleware(['admin'])->group(function () {
+        Route::get('/admin', [AuthController::class, 'showAdminPage'])->name('admin');
+        Route::get('/restaurantes', [AuthController::class, 'index'])->name('restaurantes.index');
+        Route::get('/restaurantes/crear', [AuthController::class, 'create'])->name('restaurantes.create');
+        Route::post('/restaurantes', [AuthController::class, 'store'])->name('restaurantes.store');
+        Route::get('/restaurantes/{restaurante}/editar', [AuthController::class, 'edit'])->name('restaurantes.edit');
+        Route::put('/restaurantes/{restaurante}', [AuthController::class, 'update'])->name('restaurantes.update');
+        Route::delete('/restaurantes/{restaurante}', [AuthController::class, 'destroy'])->name('restaurantes.destroy');
+    });
 });
 // ------------------------------------------------------------------------------------------------------------------------
 

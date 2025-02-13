@@ -14,7 +14,7 @@
         <!-- Header -->
         <header class="header">
             <img src="{{ asset('images/TheFork.png') }}" alt="Logo de The Fork" class="logo">
-            <a href="{{ route('home') }}" class="login-button">
+            <a href="{{ route('login') }}" class="login-button">
                 Iniciar Sesión
             </a>
         </header>
