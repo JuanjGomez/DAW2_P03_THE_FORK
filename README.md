@@ -24,35 +24,35 @@ Este proyecto transversal es una aplicación web desarrollada como parte del mó
 
 ### 📂 Estructura del Proyecto
 
-DAW2_P03_THE_FORK/
-├── app/
-│   ├── Http/
-│   │   ├── Controllers/    # Controladores de la aplicación
-│   │   └── Middleware/     # Middlewares de autenticación
-│   └── Models/             # Modelos de la base de datos
-├── config/                 # Configuración de la aplicación
-├── database/
-│   ├── migrations/         # Migraciones de la base de datos
-│   └── seeders/           # Seeders para datos iniciales
-├── public/
-│   ├── images/            # Imágenes públicas
-│   ├── js/               # JavaScript compilado
-│   └── css/              # CSS compilado
-├── resources/
-│   ├── css/              # Archivos fuente CSS
-│   ├── js/               # Archivos fuente JavaScript
-│   └── views/            # Vistas Blade
-│       ├── auth/         # Vistas de autenticación
-│       ├── layouts/      # Plantillas base
-│       └── components/   # Componentes reutilizables
-├── routes/
-│   ├── web.php          # Rutas web
-│   └── api.php          # Rutas API
-├── storage/             # Archivos generados
-├── tests/              # Pruebas
-├── vendor/             # Dependencias de Composer
-├── .env               # Variables de entorno
-└── README.md          # Documentación
+- **DAW2_P03_THE_FORK/**
+  - **app/**
+    - **Http/**
+      - **Controllers/**  # Controladores de la aplicación
+      - **Middleware/**   # Middlewares de autenticación
+    - **Models/**         # Modelos de la base de datos
+  - **config/**           # Configuración de la aplicación
+  - **database/**
+    - **migrations/**     # Migraciones de la base de datos
+    - **seeders/**        # Seeders para datos iniciales
+  - **public/**
+    - **images/**         # Imágenes públicas
+    - **js/**             # JavaScript compilado
+    - **css/**            # CSS compilado
+  - **resources/**
+    - **css/**            # Archivos fuente CSS
+    - **js/**             # Archivos fuente JavaScript
+    - **views/**          # Vistas Blade
+      - **auth/**         # Vistas de autenticación
+      - **layouts/**      # Plantillas base
+      - **components/**   # Componentes reutilizables
+  - **routes/**
+    - **web.php**        # Rutas web
+    - **api.php**        # Rutas API
+  - **storage/**         # Archivos generados
+  - **tests/**           # Pruebas
+  - **vendor/**          # Dependencias de Composer
+  - **.env**             # Variables de entorno
+  - **README.md**        # Documentación
 
 ---
 
