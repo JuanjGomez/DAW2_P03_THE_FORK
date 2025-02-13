@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Usuario;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\ValidationException;
 class AuthController extends Controller
 {
@@ -37,9 +36,9 @@ class AuthController extends Controller
 
             // Almacenar un mensaje flash en la sesión para mostrarlo en la vista de redirección
             session()->flash('success', "Bienvenido $username!");
-            
+
             // Redirige segun el rol del usuario
-            return ($rol_id == 1) ? redirect()->route('admin') : redirect()->route('principal');
+            return ($rol_id == 1) ? redirect()->route('restaurantes.index') : redirect()->route('principal');
         }
 
         // Si la autenticación falla, redirige de vuelta con un mensaje de error
@@ -59,7 +58,7 @@ class AuthController extends Controller
         // Validar los datos del formulario
         $request->validate([
             'username' => 'required|string|max:30',
-            'email' => 'required|string|email|max:120|unique:usuarios',
+            'email' => 'required|string|email|max:120|unique:users',
             'password' => 'required|string|min:8|confirmed',
         ]);
 
@@ -68,18 +67,12 @@ class AuthController extends Controller
             'username' => $request->username,
             'email'=> $request->email,
             'password' => Hash::make($request->password),
-            'rol_id' => 3, // Asignacion del rol de standard
         ]);
 
-        $username = $usuario->username;
-
         // Autenticar al usuario y redirigir
-        Auth::login($usuario);
-        // Anadir mensaje de extio en la sesion
-        session()->flash('success', "Bienvenido $username!");
+        // Auth::login($usuario);
         return redirect()->route('principal');
     }
-
 
     public function Logout(Request $request){
         // Cerrar sesión
@@ -88,63 +81,7 @@ class AuthController extends Controller
         $request->session()->invalidate();
         // Eliminar la cookie de sesión para que expire
         $request->session()->regenerateToken();
-        // Redirigir al usuario al home
-        return redirect('/');
-    }
-
-    public function showWelcomePage()
-    {
-        $restaurantes = \App\Models\Restaurante::where('municipio', 'Barcelona')
-            ->orderBy('precio_promedio', 'desc')
-            ->take(5)
-            ->get();
-
-        return view('welcome', ['restaurantes' => $restaurantes]);
-    }
-
-    public function showPrincipalPage(Request $request)
-    {
-        $query = \App\Models\Restaurante::with(['tipoCocina', 'ratings']);
-
-        if ($request->has('nombre') && $request->nombre != '') {
-            $query->where('nombre_r', 'like', '%' . $request->nombre . '%');
-        }
-
-        if ($request->has('tipo_comida') && $request->tipo_comida != '') {
-            $query->whereHas('tipoCocina', function($q) use ($request) {
-                $q->where('nombre', 'like', '%' . $request->tipo_comida . '%');
-            });
-        }
-
-        if ($request->has('precio_min') && $request->precio_min != '') {
-            $query->where('precio_promedio', '>=', $request->precio_min);
-        }
-
-        if ($request->has('precio_max') && $request->precio_max != '') {
-            $query->where('precio_promedio', '<=', $request->precio_max);
-        }
-
-        if ($request->has('municipio') && $request->municipio != '') {
-            $query->where('municipio', $request->municipio);
-        }
-
-        $restaurantes = $query->orderBy('precio_promedio', 'desc')->paginate(10);
-        $municipios = \App\Models\Restaurante::distinct()->pluck('municipio');
-
-        return view('principal', [
-            'restaurantes' => $restaurantes,
-            'municipios' => $municipios
-        ]);
-    }
-
-    public function showRestaurantePage($id)
-    {
-        $restaurante = \App\Models\Restaurante::with(['tipoCocina', 'ratings'])->findOrFail($id);
-        return view('restaurante', ['restaurante' => $restaurante]);
-    }
-
-    public function showPerfilPage()
-    {
-        return view('perfil');
+        // Redirigir al usuario al login
+        return redirect('/home');
     }
 }
