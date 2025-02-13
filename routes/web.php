@@ -24,6 +24,8 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 // Rutas securizadas ------------------------------------------------------------------------------------------------------
 Route::middleware(['auth'])->group(function () {
     // Principal
-    Route::get('/principal', function() {return view('principal');})->name('principal');
+    Route::get('/principal', [AuthController::class, 'showPrincipalPage'])->name('principal');
 });
 // ------------------------------------------------------------------------------------------------------------------------
+
+Route::get('/restaurante/{id}', [AuthController::class, 'showRestaurantePage'])->name('restaurante');

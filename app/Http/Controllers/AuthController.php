@@ -100,4 +100,20 @@ class AuthController extends Controller
 
         return view('welcome', ['restaurantes' => $restaurantes]);
     }
+
+    public function showPrincipalPage()
+    {
+        $restaurantes = \App\Models\Restaurante::with(['tipoCocina', 'ratings'])
+            ->orderBy('precio_promedio', 'desc')
+            ->take(4)
+            ->get();
+
+        return view('principal', ['restaurantes' => $restaurantes]);
+    }
+
+    public function showRestaurantePage($id)
+    {
+        $restaurante = \App\Models\Restaurante::with(['tipoCocina', 'ratings'])->findOrFail($id);
+        return view('restaurante', ['restaurante' => $restaurante]);
+    }
 }
