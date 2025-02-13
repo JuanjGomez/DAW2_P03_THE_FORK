@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 
-Route::get('/', [AuthController::class, 'showWelcomePage']);
+Route::get('/', [AuthController::class, 'showWelcomePage'])->name('home');
 
 // Rutas de acceso abierto -----------------------------------------------------------------------------------------------
 Route::get('/home', function() {return view('home');})->name('home');
@@ -24,6 +24,13 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 // Rutas securizadas ------------------------------------------------------------------------------------------------------
 Route::middleware(['auth'])->group(function () {
     // Principal
-    Route::get('/principal', function() {return view('principal');})->name('principal');
+    Route::get('/principal', [AuthController::class, 'showPrincipalPage'])->name('principal');
 });
 // ------------------------------------------------------------------------------------------------------------------------
+
+Route::get('/restaurante/{id}', [AuthController::class, 'showRestaurantePage'])->name('restaurante');
+
+Route::get('/perfil', [AuthController::class, 'showPerfilPage'])->name('perfil');
+
+// Ruta para salir de sesion
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
