@@ -1,0 +1,47 @@
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    background-color: #f8f8f8;
+}
+
+.logo {
+    height: 50px;
+}
+
+.user-logo {
+    height: 40px;
+    border-radius: 50%;
+}
+
+.search-bar, .actions {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.restaurant-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.restaurant-card {
+    border: 1px solid #ddd;
+    margin: 10px;
+    padding: 10px;
+    width: 300px;
+    text-align: center;
+}
+
+.restaurant-card img {
+    width: 100%;
+    height: auto;
+}
+
+.restaurant-actions {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 10px;
+}

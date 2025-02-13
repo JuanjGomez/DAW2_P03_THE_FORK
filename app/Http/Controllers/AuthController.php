@@ -40,9 +40,13 @@ class AuthController extends Controller
             // Almacenar un mensaje flash en la sesión para mostrarlo en la vista de redirección
             // Almacenar un mensaje flash en la sesión para mostrarlo en la vista de redirección
             session()->flash('success', "Bienvenido $username!");
+<<<<<<< HEAD
             // Redirige segun el rol del usuario
+=======
+
+>>>>>>> f3c06d705489fb27d0842b61e582fac7fa85f002
             // Redirige segun el rol del usuario
-            return ($rol_id == 1) ? redirect()->route('admin') : redirect()->route('principal');
+            return ($rol_id == 1) ? redirect()->route('admin.restaurantes.index') : redirect()->route('principal');
         }
         // Si la autenticación falla, redirige de vuelta con un mensaje de error
         // Si la autenticación falla, redirige de vuelta con un mensaje de error

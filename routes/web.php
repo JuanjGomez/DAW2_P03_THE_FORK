@@ -7,7 +7,6 @@ use App\Http\Controllers\RestauranteController;
 Route::get('/', [AuthController::class, 'showWelcomePage'])->name('home');
 
 // Rutas de acceso abierto -----------------------------------------------------------------------------------------------
-Route::get('/home', function() {return view('home');})->name('home');
 
 //Ruta formulario de sesion
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -26,7 +25,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::middleware(['auth'])->group(function () {
     // Principal
     Route::get('/principal', [AuthController::class, 'showPrincipalPage'])->name('principal');
-// ------------------------------------------------------------------------------------------------------------------------
+
     // Rutas de administración de restaurantes (solo para admins)
     Route::middleware(['admin'])->group(function () {
         Route::get('/admin', [AuthController::class, 'showAdminPage'])->name('admin');
