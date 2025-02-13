@@ -88,7 +88,7 @@ class AuthController extends Controller
         // Eliminar la cookie de sesión para que expire
         $request->session()->regenerateToken();
         // Redirigir al usuario al login
-        return redirect('home');
+        return redirect('');
     }
 
     public function showWelcomePage()
