@@ -80,6 +80,7 @@ class AuthController extends Controller
         return redirect()->route('principal');
     }
 
+
     public function Logout(Request $request){
         // Cerrar sesión
         Auth::logout();
@@ -87,8 +88,8 @@ class AuthController extends Controller
         $request->session()->invalidate();
         // Eliminar la cookie de sesión para que expire
         $request->session()->regenerateToken();
-        // Redirigir al usuario al login
-        return redirect('home');
+        // Redirigir al usuario al home
+        return redirect('/');
     }
 
     public function showWelcomePage()
@@ -99,5 +100,51 @@ class AuthController extends Controller
             ->get();
 
         return view('welcome', ['restaurantes' => $restaurantes]);
+    }
+
+    public function showPrincipalPage(Request $request)
+    {
+        $query = \App\Models\Restaurante::with(['tipoCocina', 'ratings']);
+
+        if ($request->has('nombre') && $request->nombre != '') {
+            $query->where('nombre_r', 'like', '%' . $request->nombre . '%');
+        }
+
+        if ($request->has('tipo_comida') && $request->tipo_comida != '') {
+            $query->whereHas('tipoCocina', function($q) use ($request) {
+                $q->where('nombre', 'like', '%' . $request->tipo_comida . '%');
+            });
+        }
+
+        if ($request->has('precio_min') && $request->precio_min != '') {
+            $query->where('precio_promedio', '>=', $request->precio_min);
+        }
+
+        if ($request->has('precio_max') && $request->precio_max != '') {
+            $query->where('precio_promedio', '<=', $request->precio_max);
+        }
+
+        if ($request->has('municipio') && $request->municipio != '') {
+            $query->where('municipio', $request->municipio);
+        }
+
+        $restaurantes = $query->orderBy('precio_promedio', 'desc')->paginate(10);
+        $municipios = \App\Models\Restaurante::distinct()->pluck('municipio');
+
+        return view('principal', [
+            'restaurantes' => $restaurantes,
+            'municipios' => $municipios
+        ]);
+    }
+
+    public function showRestaurantePage($id)
+    {
+        $restaurante = \App\Models\Restaurante::with(['tipoCocina', 'ratings'])->findOrFail($id);
+        return view('restaurante', ['restaurante' => $restaurante]);
+    }
+
+    public function showPerfilPage()
+    {
+        return view('perfil');
     }
 }
