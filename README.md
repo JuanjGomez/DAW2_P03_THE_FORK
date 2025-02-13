@@ -1,38 +1,112 @@
-# DAW2_P03_THE_FORK
+# 🎬 DAW2_P03_THE_FORK
 
-Creación de un sitio web que sea una guía de restaurantes de nuestra ciudad. Aprenda a hacer sitios web con Laravel.
+### 👥 Miembros del Equipo
+- Àngel Camps Ruíz
+- Juanjo Gomez Rosales
+- Aina Orozco Gonzalez
 
-<p align="center">
-  <a href="https://laravel.com" target="_blank">
-        <img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo">
-  </a>
-</p>
+### 🌐 Repositorio del Proyecto
+[GitHub - DAW2_P03_THE_FORK](https://github.com/JuanjGomez/DAW2_P03_THE_FORK.git)
 
-<p align="center">
-  <a href="https://github.com/laravel/framework/actions">
-    <img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status">
-  </a>
-  <a href="https://packagist.org/packages/laravel/framework">
-    <img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads">
-  </a>
-  <a href="https://packagist.org/packages/laravel/framework">
-    <img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version">
-  </a>
-  <a href="https://packagist.org/packages/laravel/framework">
-    <img src="https://img.shields.io/packagist/l/laravel/framework" alt="License">
-  </a>
-</p>
+---
 
-## About Laravel
+### 📝 Descripción del Proyecto
+Este proyecto transversal es una aplicación web desarrollada como parte del módulo 12 en el curso de **Desenvolupament d'Aplicacions Web (DAW)**. La aplicación permite acceder a The Fork, una web de restaurantes, con la posibilidad de registrarse, acceder a la web, y ver los restaurantes mas populares, hacer una busqueda por filtros, o ver los detalles de cada restaurante.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### 🚀 Funcionalidades Principales
+- **Visualización de Restaurantes:** Visualizar los restaurantes mas populares, buscar por filtros, ver los detalles de cada restaurante, solo para usuarios registrados como estandares.
+- **Valoración de Restaurantes:** Los usuarios pueden valorar los restaurantes al estar logeados.
+- **Login de Usuarios/administradores:** Login de usuarios y administradores, con la posibilidad de registrarse.
+- **CRUD para administradores:** Crear, leer, actualizar y eliminar restaurantes, usuarios.
+---
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### 📂 Estructura del Proyecto
+
+DAW2_P03_THE_FORK/
+├── app/
+│   ├── Http/
+│   │   ├── Controllers/    # Controladores de la aplicación
+│   │   └── Middleware/     # Middlewares de autenticación
+│   └── Models/             # Modelos de la base de datos
+├── config/                 # Configuración de la aplicación
+├── database/
+│   ├── migrations/         # Migraciones de la base de datos
+│   └── seeders/           # Seeders para datos iniciales
+├── public/
+│   ├── images/            # Imágenes públicas
+│   ├── js/               # JavaScript compilado
+│   └── css/              # CSS compilado
+├── resources/
+│   ├── css/              # Archivos fuente CSS
+│   ├── js/               # Archivos fuente JavaScript
+│   └── views/            # Vistas Blade
+│       ├── auth/         # Vistas de autenticación
+│       ├── layouts/      # Plantillas base
+│       └── components/   # Componentes reutilizables
+├── routes/
+│   ├── web.php          # Rutas web
+│   └── api.php          # Rutas API
+├── storage/             # Archivos generados
+├── tests/              # Pruebas
+├── vendor/             # Dependencias de Composer
+├── .env               # Variables de entorno
+└── README.md          # Documentación
+
+---
+
+### 🔧 Tecnologías Utilizadas
+- **Laravel:** Framework de PHP para el backend
+- **Blade:** Motor de plantillas de Laravel
+- **JavaScript:** Interactividad en el frontend
+- **MySQL:** Base de datos relacional
+- **Vite:** Compilador de assets
+- **Git:** Control de versiones
+
+---
+
+### 🚀 Comenzar
+Para comenzar con el proyecto, sigue estos pasos:
+
+1. Clona el repositorio:
+git clone https://github.com/JuanjGomez/DAW2_P03_THE_FORK.git
+
+2. Instala las dependencias:
+composer install
+npm install
+
+3. Configura el archivo .env:
+cp .env.example .env
+php artisan key:generate
+
+4. Configura la base de datos en .env y ejecuta las migraciones:
+php artisan migrate --seed
+
+5. Inicia el servidor:
+php artisan serve
+npm run dev
+
+---
+
+### 🛡️ Recomendaciones de Seguridad
+Este proyecto requiere que los usuarios se autentiquen antes de gestionar los recursos. Para proteger los datos y el acceso, es importante que cada usuario cierre sesión después de su uso.
+
+---
+
+### 🗒️ Planificación y Seguimiento del Proyecto
+Se ha utilizado una planificación en GitHub para el seguimiento del proyecto. La organización incluye:
+
+- **Daily Meetings:** Reuniones diarias al inicio de la jornada para coordinar tareas.
+- **Branches, Commits diarios y roadmap:** El equipo hace commits diarios al principio y final de cada jornada para asegurar una integración continua.Además, se ha creado un roadmap para el proyecto.
+- **Issues y Labels:** Uso de issues y etiquetas para gestionar el desarrollo.
+
+---
+
+### 📞 Contacto
+Para preguntas o comentarios, contáctanos a través del repositorio de GitHub!.
+
+---
+
+### ⚠️ Nota
+*Esta es una web de pruebas realizada para un Proyecto del Instituto.*
