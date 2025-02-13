@@ -9,6 +9,7 @@ class Rating extends Model
 {
     use HasFactory;
     protected $table = 'ratings';
+    protected $fillable = ['user_id', 'restaurante_id', 'rating', 'comentario'];
 
     // Relacion con la tabla usuarios
     public function usuario(){

@@ -9,6 +9,7 @@ class TipoCocina extends Model
 {
     use HasFactory;
     protected $table = 'tipo_cocina';
+    protected $fillable = ['nombre'];
 
     // Relacion con la tabla restaurantes
     public function restaurantes(){

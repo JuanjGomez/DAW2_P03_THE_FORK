@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.16.0/dist/sweetalert2.min.css" integrity="sha256-YiFT9lvNOGMbi29lCphiiB6iZOnEnj6SJ4R6Y1n8ukM=" crossorigin="anonymous">
     <title>Login</title>
 </head>
 <body>
@@ -24,11 +25,12 @@
             <button type="submit" id="btnSesion" disabled>Login</button>
         </div>
         @if ($errors->any())
-            <div>
-                <strong>{{ $errors->first() }}</strong>
-            </div>
+            <script>
+                let errorMessage = "{{$errors->first()}}";
+            </script>
         @endif
     </form>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.16.0/dist/sweetalert2.all.min.js" integrity="sha256-JxrPeaXEC22LUNm25PF02qeQ756a2XN/mxPJlfk9Lb8=" crossorigin="anonymous"></script>
     <script src="{{asset('js/formLoginVali.js')}}"></script>
 </body>
 </html>

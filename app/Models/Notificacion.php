@@ -9,6 +9,7 @@ class Notificacion extends Model
 {
     use HasFactory;
     protected $table = 'notificaciones';
+    protected $fillable = ['mensaje', 'sent_at', 'restaurante_id'];
 
     // Relacion con la tabla restaurantes
     public function restaurante(){

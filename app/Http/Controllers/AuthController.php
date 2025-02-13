@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Usuario;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\ValidationException;
 class AuthController extends Controller
 {
@@ -25,11 +26,20 @@ class AuthController extends Controller
         ]);
 
         // Intentar autenticar al usuario con las credenciales proporcionadas
-        if(Auth::attempt($request->only('email', 'password'))){
-            // Si las credenciales son válidas, regenera la sesión para protegerla contra ataques
+        if (Auth::attempt($request->only('email', 'password'))) {
+            // Si las credenciales son válidas, regenera la sesión para protegerla contra ataques de fijación de sesión
             $request->session()->regenerate();
-            // Redirige al usuario a la página que intentaba acceder o al dashboard por defecto
-            return redirect()->intended('/principal');
+
+            // Obtener datos del usuario
+            $user = Auth::user();
+            $username = $user->username;
+            $rol_id = $user->rol_id;
+
+            // Almacenar un mensaje flash en la sesión para mostrarlo en la vista de redirección
+            session()->flash('success', "Bienvenido $username!");
+            
+            // Redirige segun el rol del usuario
+            return ($rol_id == 1) ? redirect()->route('admin') : redirect()->route('principal');
         }
 
         // Si la autenticación falla, redirige de vuelta con un mensaje de error
@@ -49,7 +59,7 @@ class AuthController extends Controller
         // Validar los datos del formulario
         $request->validate([
             'username' => 'required|string|max:30',
-            'email' => 'required|string|email|max:120|unique:users',
+            'email' => 'required|string|email|max:120|unique:usuarios',
             'password' => 'required|string|min:8|confirmed',
         ]);
 
@@ -58,10 +68,15 @@ class AuthController extends Controller
             'username' => $request->username,
             'email'=> $request->email,
             'password' => Hash::make($request->password),
+            'rol_id' => 3, // Asignacion del rol de standard
         ]);
 
+        $username = $usuario->username;
+
         // Autenticar al usuario y redirigir
-        // Auth::login($usuario);
+        Auth::login($usuario);
+        // Anadir mensaje de extio en la sesion
+        session()->flash('success', "Bienvenido $username!");
         return redirect()->route('principal');
     }
 
@@ -73,6 +88,6 @@ class AuthController extends Controller
         // Eliminar la cookie de sesión para que expire
         $request->session()->regenerateToken();
         // Redirigir al usuario al login
-        return redirect('/home');
+        return redirect('home');
     }
 }

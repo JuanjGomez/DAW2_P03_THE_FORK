@@ -60,3 +60,16 @@ function verificarForm() {
     document.getElementById('btnSesion').disabled = hayErrores || camposVacios
 }
 // -----------------------------------------------------------------------------------------------------------------
+
+// SweetAlerts ------------------------------------------------------------------------------------------------------
+
+// Alert para decir que las credenciales no son correctas
+if(typeof errorMessage !== 'undefined' && errorMessage !== "") {
+    Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: errorMessage,
+    })
+}
+
+// ------------------------------------------------------------------------------------------------------------------
