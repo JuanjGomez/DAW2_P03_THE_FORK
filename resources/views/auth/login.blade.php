@@ -4,10 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+    <!-- Styles / Scripts -->
+    @vite(['resources/css/app.css', 'resources/css/custom.css', 'resources/js/app.js'])
+    <link rel="stylesshet" href="{{asset('css/')}}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.16.0/dist/sweetalert2.min.css" integrity="sha256-YiFT9lvNOGMbi29lCphiiB6iZOnEnj6SJ4R6Y1n8ukM=" crossorigin="anonymous">
     <title>Login</title>
 </head>
-<body>
+<body style="font-family: 'Figtree', sans-serif; -webkit-font-smoothing: antialiased;">
     <h1>Login</h1>
     <form method="POST" action="{{ route('login') }}">
         @csrf
