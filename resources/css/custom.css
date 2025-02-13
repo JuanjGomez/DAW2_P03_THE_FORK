@@ -68,13 +68,32 @@
 }
 
 .search-button {
-    padding: 0.25rem 0.75rem;
-    background-color: #007bff;
+    background-color: #02665d;
     color: white;
     border: none;
     border-radius: 0.25rem;
-    font-size: 0.875rem;
+    padding: 0.5rem 1rem;
     cursor: pointer;
+    font-size: 0.875rem;
+}
+
+.search-button:hover {
+    background-color: #01524b;
+}
+
+.clear-filters-button {
+    background-color: #019688;
+    color: white;
+    border: none;
+    border-radius: 0.25rem;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    font-size: 0.875rem;
+    text-decoration: none;
+}
+
+.clear-filters-button:hover {
+    background-color: #01796f;
 }
 
 .hero-image {

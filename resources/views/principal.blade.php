@@ -41,6 +41,7 @@
                 @endfor
             </select>
             <button type="submit" class="search-button">Buscar</button>
+            <a href="{{ route('principal') }}" class="clear-filters-button">Borrar filtros</a>
         </form>
         <div class="user-menu">
             <img src="{{ asset('images/user.png') }}" alt="Foto de usuario" class="user-logo">
