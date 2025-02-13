@@ -36,7 +36,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/restaurantes/{restaurante}/editar', [AuthController::class, 'edit'])->name('restaurantes.edit');
         Route::put('/restaurantes/{restaurante}', [AuthController::class, 'update'])->name('restaurantes.update');
     });
-});
+    });
 // ------------------------------------------------------------------------------------------------------------------------
 
 Route::get('/restaurante/{id}', [AuthController::class, 'showRestaurantePage'])->name('restaurante');
@@ -47,3 +47,5 @@ Route::get('/perfil', [AuthController::class, 'showPerfilPage'])->name('perfil')
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::match(['post', 'put'], '/restaurante/{id}/rate', [AuthController::class, 'rateRestaurante'])->name('restaurante.rate');
+
+Route::put('/perfil', [AuthController::class, 'updatePerfil'])->name('perfil.update');
