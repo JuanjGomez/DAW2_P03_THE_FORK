@@ -80,6 +80,7 @@ class AuthController extends Controller
         return redirect()->route('principal');
     }
 
+
     public function Logout(Request $request){
         // Cerrar sesión
         Auth::logout();
@@ -87,8 +88,8 @@ class AuthController extends Controller
         $request->session()->invalidate();
         // Eliminar la cookie de sesión para que expire
         $request->session()->regenerateToken();
-        // Redirigir al usuario al login
-        return redirect('home');
+        // Redirigir al usuario al home
+        return redirect('/');
     }
 
     public function showWelcomePage()
