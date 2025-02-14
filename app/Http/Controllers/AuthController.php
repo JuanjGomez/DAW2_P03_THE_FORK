@@ -42,7 +42,7 @@ class AuthController extends Controller
             session()->flash('success', "Bienvenido $username!");
 
             // Redirige segun el rol del usuario
-            return ($rol_id == 1) ? redirect()->route('admin.restaurantes.index') : redirect()->route('principal');
+            return ($rol_id == 1) ? redirect()->route('restaurantes.index') : redirect()->route('principal');
         }
 
         // Si la autenticación falla, redirige de vuelta con un mensaje de error
@@ -133,9 +133,9 @@ class AuthController extends Controller
 
         if ($request->has('valoracion_min') && $request->valoracion_min != '') {
             $query->whereHas('ratings', function($q) use ($request) {
-                $q->select('restaurante_id')
-                  ->groupBy('restaurante_id')
-                  ->havingRaw('AVG(rating) >= ?', [$request->valoracion_min]);
+                $q->select('restaurante_id');
+                $q->groupBy('restaurante_id');
+                $q->havingRaw('AVG(rating) >= ?', [$request->valoracion_min]);
             });
         }
 

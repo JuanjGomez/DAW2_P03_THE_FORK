@@ -8,8 +8,7 @@ use App\Models\Restaurante;
 class RestauranteController extends Controller
 {
     // Mostrar lista de restaurantes
-    public function index()
-    {
+    public function index(){
         $restaurantes = Restaurante::all();
         return view('admin.restaurantes.index', compact('restaurantes'));
     }
