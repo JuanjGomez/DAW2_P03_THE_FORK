@@ -207,4 +207,43 @@ class AuthController extends Controller
 
         return redirect()->route('perfil')->with('success', 'Perfil actualizado correctamente.');
     }
+
+    public function filterRestaurants(Request $request)
+    {
+        $query = \App\Models\Restaurante::with(['tipoCocina', 'ratings']);
+
+        if ($request->has('nombre') && $request->nombre != '') {
+            $query->where('nombre_r', 'like', '%' . $request->nombre . '%');
+        }
+
+        if ($request->has('tipo_comida') && $request->tipo_comida != '') {
+            $query->whereHas('tipoCocina', function($q) use ($request) {
+                $q->where('nombre', 'like', '%' . $request->tipo_comida . '%');
+            });
+        }
+
+        if ($request->has('precio_min') && $request->precio_min != '') {
+            $query->where('precio_promedio', '>=', $request->precio_min);
+        }
+
+        if ($request->has('precio_max') && $request->precio_max != '') {
+            $query->where('precio_promedio', '<=', $request->precio_max);
+        }
+
+        if ($request->has('municipio') && $request->municipio != '') {
+            $query->where('municipio', $request->municipio);
+        }
+
+        if ($request->has('valoracion_min') && $request->valoracion_min != '') {
+            $query->whereHas('ratings', function($q) use ($request) {
+                $q->select('restaurante_id')
+                  ->groupBy('restaurante_id')
+                  ->havingRaw('AVG(rating) >= ?', [$request->valoracion_min]);
+            });
+        }
+
+        $restaurantes = $query->orderBy('precio_promedio', 'desc')->paginate(10);
+
+        return view('partials.restaurant_list', ['restaurantes' => $restaurantes])->render();
+    }
 }
