@@ -4,7 +4,7 @@
 if (window.successMessage) {
     Swal.fire({
         icon: 'success',
-        title: '¡Bienvenido!',
+        title: window.successMessage,
         text: window.successMessage,
     });
 

@@ -59,7 +59,8 @@ class RestauranteController extends Controller
     // Mostrar formulario de edición
     public function edit(Restaurante $restaurante)
     {
-        return view('admin.restaurantes.edit', compact('restaurante'));
+        $tiposCocina = TipoCocina::all();
+        return view('admin.restaurantes.edit', compact('restaurante', 'tiposCocina'));
     }
 
     // Actualizar restaurante
@@ -70,12 +71,19 @@ class RestauranteController extends Controller
             'descripcion' => 'nullable|string|max:255',
             'direccion' => 'nullable|string|max:255',
             'precio_promedio' => 'required|numeric',
-            'imagen' => 'nullable|string|max:255',
+            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'municipio' => 'nullable|string|max:255',
             'tipo_cocina_id' => 'required|exists:tipo_cocina,id',
         ]);
 
-        $restaurante->update($request->all());
+        if ($request->hasFile('imagen')) {
+            $imagen = $request->file('imagen');
+            $nombreImagen = time() . '.' . $imagen->getClientOriginalExtension();
+            $imagen->move(public_path('images/restaurantes'), $nombreImagen);
+            $restaurante->imagen = $nombreImagen;
+        }
+
+        $restaurante->update($request->except('imagen'));
 
         return redirect()->route('restaurantes.index')->with('success', 'Restaurante actualizado con éxito.');
     }
