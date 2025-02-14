@@ -55,7 +55,7 @@
                 <form id="formEliminar-{{ $restaurante->id }}" method="POST" action="{{ route('restaurantes.destroy', $restaurante->id) }}">
                     @csrf
                     @method('DELETE')
-                    <button id="btnEliminar" type="button" onclick="confirmarEliminacion({{ $restaurante->id }})">ELIMINAR</button>
+                    <button id="btnEliminar" type="button" onclick="confirmarEliminacion('{{ $restaurante->id }}')">ELIMINAR</button>
                 </form>
             </div>
         </div>
