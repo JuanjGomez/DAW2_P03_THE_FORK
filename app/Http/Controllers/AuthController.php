@@ -20,31 +20,35 @@ class AuthController extends Controller
 
     // Maneja el proceso de login
     public function login(Request $request){
-
+        // 1. Validar los datos del formulario:
         // 1. Validar los datos del formulario:
         // el email debe ser válido y la contraseña no puede estar vacía
         $request->validate([
             'email' => 'required|email|max:120',
             'password' => 'required|max:255',
         ]);
-
+        // Intentar autenticar al usuario con las credenciales proporcionadas
         // Intentar autenticar al usuario con las credenciales proporcionadas
         if (Auth::attempt($request->only('email', 'password'))) {
             // Si las credenciales son válidas, regenera la sesión para protegerla contra ataques de fijación de sesión
             $request->session()->regenerate();
-
+            // Obtener datos del usuario
             // Obtener datos del usuario
             $user = Auth::user();
             $username = $user->username;
             $rol_id = $user->rol_id;
-
+            // Almacenar un mensaje flash en la sesión para mostrarlo en la vista de redirección
             // Almacenar un mensaje flash en la sesión para mostrarlo en la vista de redirección
             session()->flash('success', "Bienvenido $username!");
+<<<<<<< HEAD
+            // Redirige segun el rol del usuario
+=======
 
+>>>>>>> f3c06d705489fb27d0842b61e582fac7fa85f002
             // Redirige segun el rol del usuario
             return ($rol_id == 1) ? redirect()->route('restaurantes.index') : redirect()->route('principal');
         }
-
+        // Si la autenticación falla, redirige de vuelta con un mensaje de error
         // Si la autenticación falla, redirige de vuelta con un mensaje de error
         return back()->withErrors([
             'email' => 'Las credenciales no coinciden con nuestros registros.',
@@ -190,5 +194,21 @@ class AuthController extends Controller
         }
 
         return redirect()->back()->with('success', 'Gracias por tu valoración!');
+    }
+
+    public function updatePerfil(Request $request)
+    {
+        $request->validate([
+            'username' => 'required|string|max:30',
+            'email' => 'required|string|email|max:120|unique:usuarios,email,' . auth()->id(),
+        ]);
+
+        $user = auth()->user();
+        $user->username = $request->username;
+        $user->email = $request->email;
+
+        $user->save();
+
+        return redirect()->route('perfil')->with('success', 'Perfil actualizado correctamente.');
     }
 }
