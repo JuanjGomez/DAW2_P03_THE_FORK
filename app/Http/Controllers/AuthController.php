@@ -40,11 +40,6 @@ class AuthController extends Controller
             // Almacenar un mensaje flash en la sesión para mostrarlo en la vista de redirección
             // Almacenar un mensaje flash en la sesión para mostrarlo en la vista de redirección
             session()->flash('success', "Bienvenido $username!");
-<<<<<<< HEAD
-            // Redirige segun el rol del usuario
-=======
-
->>>>>>> f3c06d705489fb27d0842b61e582fac7fa85f002
             // Redirige segun el rol del usuario
             return ($rol_id == 1) ? redirect()->route('restaurantes.index') : redirect()->route('principal');
         }
@@ -155,7 +150,7 @@ class AuthController extends Controller
     public function showRestaurantePage($id)
     {
         $restaurante = \App\Models\Restaurante::with(['tipoCocina', 'ratings'])->findOrFail($id);
-        $userRating = $restaurante->ratings()->where('user_id', auth()->id())->first();
+        $userRating = Auth::check() ? $restaurante->ratings()->where('user_id', Auth::id())->first() : null;
 
         return view('restaurante', [
             'restaurante' => $restaurante,
@@ -176,7 +171,7 @@ class AuthController extends Controller
         ]);
 
         $restaurante = Restaurante::findOrFail($id);
-        $user = auth()->user();
+        $user = Auth::user();
 
         $rating = $restaurante->ratings()->where('user_id', $user->id)->first();
 
@@ -200,14 +195,14 @@ class AuthController extends Controller
     {
         $request->validate([
             'username' => 'required|string|max:30',
-            'email' => 'required|string|email|max:120|unique:usuarios,email,' . auth()->id(),
+            'email' => 'required|string|email|max:120|unique:usuarios,email,' . Auth::id(),
         ]);
 
-        $user = auth()->user();
-        $user->username = $request->username;
-        $user->email = $request->email;
-
-        $user->save();
+        $user = Auth::user();
+        Usuario::where('id', $user->id)->update([
+            'username' => $request->username,
+            'email' => $request->email
+        ]);
 
         return redirect()->route('perfil')->with('success', 'Perfil actualizado correctamente.');
     }

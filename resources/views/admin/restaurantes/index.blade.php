@@ -32,7 +32,7 @@
     </div>
 
     <div class="actions">
-        <button id="crearRestaurante">CREAR RESTAURANTE</button>
+        <a href="{{ route('restaurantes.create') }}" class="button" id="crearRestaurante">CREAR RESTAURANTE</a>
         <button>VER USUARIOS</button>
     </div>
 

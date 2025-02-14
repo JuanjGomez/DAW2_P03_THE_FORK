@@ -9,7 +9,7 @@ class Restaurante extends Model
 {
     use HasFactory;
     protected $table = 'restaurantes';
-    protected $fillable = ['nombre_r', 'descripcion', 'precio_promedio', 'imagen', 'municipio', 'tipo_cocina_id'];
+    protected $fillable = ['nombre_r', 'descripcion', 'direccion', 'precio_promedio', 'imagen', 'municipio', 'tipo_cocina_id'];
 
     // Relacion con la tabla tipo_cocina
     public function tipoCocina(){
