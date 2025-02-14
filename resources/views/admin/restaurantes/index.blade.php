@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
     <!-- Styles / Scripts -->
-    @vite(['resources/css/app.css', 'resources/css/custom.css', 'resources/css/crudRestaurante.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css', 'resources/css/crudRestaurante.css', 'resources/js/app.js'])
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.16.0/dist/sweetalert2.min.css">
 </head>
 <body>
@@ -18,6 +18,12 @@
         <h1>Zona Admin Restaurantes</h1>
         <div class="user-menu">
             <img src="{{ asset('images/user.png') }}" alt="Foto de usuario" class="user-logo">
+            <div class="dropdown-menu">
+                <form method="POST" action="{{ route('logout') }}" class="dropdown-item">
+                    @csrf
+                    <button type="submit" class="logout-button">Cerrar sesión</button>
+                </form>
+            </div>
         </div>
     </header>
 
@@ -42,8 +48,15 @@
             <h2>{{ $restaurante->nombre_r }}</h2>
             <img src="{{ asset('images/restaurantes/' . $restaurante->imagen) }}" alt="{{ $restaurante->nombre_r }}">
             <div class="restaurant-actions">
-                <button>EDITAR</button>
-                <button>ELIMINAR</button>
+                <form method="GET" action="{{ route('restaurantes.edit', $restaurante->id) }}">
+                    @csrf
+                    <button type="submit">EDITAR</button>
+                </form>
+                <form id="formEliminar-{{ $restaurante->id }}" method="POST" action="{{ route('restaurantes.destroy', $restaurante->id) }}">
+                    @csrf
+                    @method('DELETE')
+                    <button id="btnEliminar" type="button" onclick="confirmarEliminacion({{ $restaurante->id }})">ELIMINAR</button>
+                </form>
             </div>
         </div>
     @endforeach

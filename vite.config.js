@@ -10,6 +10,7 @@ export default defineConfig({
                 'resources/css/formLogin.css',
                 'resources/css/register.css',
                 'resources/css/crudRestaurante.css',
+                'resources/css/formEditRestaurant.css',
                 'resources/js/app.js',
                 'resources/js/app.js',
                 'resources/js/rating.js'

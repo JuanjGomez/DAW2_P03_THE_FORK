@@ -69,7 +69,7 @@ h1{
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     overflow: hidden;
     text-align: center;
-    width: calc(45% - 20px);
+    width: calc(42.5% - 20px);
     margin-bottom: 20px;
     display: flex;
     flex-direction: column;
@@ -90,43 +90,75 @@ h1{
     font-weight: 600;
     color: #333;
     margin-top: 10px;
-    text-align: left;
+    text-align: left !important;
     padding: 10px;
     margin: 0;
 }
 
-.restaurant-actions {
+.user-menu {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
     display: flex;
-    justify-content: space-around;
-    width: 90%; /* Alinea el ancho de los botones con el de las imágenes */
-    margin: 0 auto;
-    padding: 10px;
+    align-items: center;
+    justify-content: center;
+    background-color: #f8f9fa;
 }
 
-.restaurant-actions button {
-    padding: 5px 10px;
+.user-menu img {
+    width: 100%;
+    height: auto;
+    border-radius: 50%;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    right: 1rem;
+    top: 60px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 0.25rem;
+    padding: 0.5rem;
+    z-index: 1000;
+}
+
+.user-menu:hover .dropdown-menu {
+    display: block;
+}
+
+.dropdown-item {
+    display: block;
+    padding: 0.25rem 0.5rem;
+    color: #333;
+    text-decoration: none;
+}
+
+.restaurant-actions{
+    display: flex;
+    justify-content:space-around;
+    width: 100%;
+    padding: 0 20px;
+    margin: 10px;
+}
+
+#crearRestaurante, .restaurant-actions button:first-child {
+    background-color: #00665A !important;
+    color: #fff;
     border: none;
     border-radius: 5px;
+    padding: 10px 20px;
     cursor: pointer;
     transition: background-color 0.3s;
 }
 
-.restaurant-actions button:first-child {
-    background-color: #00665A;
-    color: #fff;
+#crearRestaurante:hover, .restaurant-actions button:first-child:hover {
+    background-color: #004d47;
 }
 
 .restaurant-actions button:last-child {
-    background-color: #e74c3c;
-    color: #fff;
-}
-
-.restaurant-actions button:hover {
-    opacity: 0.8;
-}
-
-#crearRestaurante {
-    background-color: #00665A;
+    background-color: #e74c3c !important;
     color: #fff;
     border: none;
     border-radius: 5px;
@@ -135,11 +167,69 @@ h1{
     transition: background-color 0.3s;
 }
 
-#buscarRestaurante {
-    background-color: #34495e;
+.restaurant-actions button:last-child:hover {
+    background-color: #c0392b;
+}
+
+.restaurant-actions button:first-child {
+    background-color: #00665A !important;
     color: #fff;
     border: none;
     border-radius: 5px;
     padding: 10px 20px;
     cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.restaurant-actions button:first-child:hover {
+    background-color: #004d47;
+}
+
+@media (max-width: 430px) {
+    .header {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .actions {
+        flex-direction: row;
+        justify-content: space-between;
+        width: 100%;
+        padding: 0 10px;
+    }
+
+    .search-bar {
+        flex-direction: column;
+        gap: 5px;
+        width: 100%;
+        padding: 0 10px;
+    }
+
+    .restaurant-card {
+        width: 100%;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    .restaurant-card img {
+        width: 90%;
+        margin: 0 auto;
+    }
+
+    .restaurant-card h2 {
+        text-align: center;
+        padding: 10px;
+        margin: 0;
+    }
+
+    .restaurant-actions {
+        flex-direction: row;
+        justify-content: space-between;
+        width: 95%;
+        padding: 0 10px;
+    }
+
+    .restaurant-actions button {
+        width: 48%;
+    }
 }
