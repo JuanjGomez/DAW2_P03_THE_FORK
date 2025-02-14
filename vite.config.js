@@ -15,7 +15,7 @@ export default defineConfig({
                 'resources/js/app.js',
                 'resources/js/app.js',
                 'resources/js/rating.js',
-                'resources/js/createRestaurante.js'
+                'resources/js/createRestaurante.js',
             ],
             refresh: true,
         }),
