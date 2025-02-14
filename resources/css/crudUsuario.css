@@ -1,0 +1,138 @@
+body {
+    font-family: 'Figtree', sans-serif;
+    background-color: #f8f9fa;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.search-bar {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 20px;
+    padding: 15px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.search-bar input, .search-bar select {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    width: 200px;
+}
+
+#buscarUsuario, #verRestaurantes {
+    background-color: #34495e;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: opacity 0.3s;
+}
+
+#buscarUsuario:hover, #verRestaurantes:hover {
+    opacity: 0.8;
+}
+
+.actions {
+    display: flex;
+    justify-content: center;
+    margin: 20px;
+}
+
+#crearUsuario {
+    background-color: #00665A;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#crearUsuario:hover {
+    opacity: 0.8;
+}
+
+.user-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    padding: 20px;
+}
+
+.user-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.user-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.user-info {
+    flex: 1;
+}
+
+.user-info h2 {
+    color: #2c3e50;
+    margin-bottom: 10px;
+}
+
+.user-info p {
+    color: #666;
+    margin: 5px 0;
+}
+
+.user-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.user-actions .button {
+    padding: 8px 16px;
+    border-radius: 5px;
+    text-decoration: none;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.3s;
+}
+
+.user-actions .button.edit {
+    background-color: #3498db;
+}
+
+.user-actions .button.delete {
+    background-color: #e74c3c;
+}
+
+.user-actions .button:hover {
+    opacity: 0.9;
+}
+
+@media (max-width: 768px) {
+    .user-grid {
+        grid-template-columns: 1fr;
+    }
+} 

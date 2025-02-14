@@ -33,7 +33,7 @@
 
     <div class="actions">
         <a href="{{ route('restaurantes.create') }}" class="button" id="crearRestaurante">CREAR RESTAURANTE</a>
-        <button>VER USUARIOS</button>
+        <a href="{{ route('usuarios.index') }}" class="button" id="verUsuarios">VER USUARIOS</a>
     </div>
 
     <div class="restaurant-grid">

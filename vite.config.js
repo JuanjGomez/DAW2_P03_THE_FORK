@@ -11,6 +11,7 @@ export default defineConfig({
                 'resources/css/register.css',
                 'resources/css/crudRestaurante.css',
                 'resources/css/createRestaurante.css',
+                'resources/css/crudUsuario.css',
                 'resources/js/app.js',
                 'resources/js/app.js',
                 'resources/js/rating.js',

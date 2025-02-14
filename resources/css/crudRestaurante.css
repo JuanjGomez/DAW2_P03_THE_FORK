@@ -143,3 +143,17 @@ h1{
     padding: 10px 20px;
     cursor: pointer;
 }
+
+#verUsuarios {
+    background-color: #34495e;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#verUsuarios:hover {
+    opacity: 0.8;
+}
