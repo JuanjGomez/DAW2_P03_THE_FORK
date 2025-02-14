@@ -45,3 +45,5 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::match(['post', 'put'], '/restaurante/{id}/rate', [AuthController::class, 'rateRestaurante'])->name('restaurante.rate');
 
 Route::put('/perfil', [AuthController::class, 'updatePerfil'])->name('perfil.update');
+
+Route::post('/filter-restaurants', [AuthController::class, 'filterRestaurants'])->name('filter.restaurants');

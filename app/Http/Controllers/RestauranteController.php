@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Restaurante;
+use App\Models\TipoCocina;
+use Illuminate\Support\Facades\Storage;
 
 class RestauranteController extends Controller
 {
@@ -16,7 +18,8 @@ class RestauranteController extends Controller
     // Mostrar formulario de creación
     public function create()
     {
-        return view('admin.restaurantes.create');
+        $tiposCocina = TipoCocina::all();
+        return view('admin.restaurantes.createRestaurante', compact('tiposCocina'));
     }
 
     // Guardar nuevo restaurante
@@ -27,12 +30,28 @@ class RestauranteController extends Controller
             'descripcion' => 'nullable|string|max:255',
             'direccion' => 'nullable|string|max:255',
             'precio_promedio' => 'required|numeric',
-            'imagen' => 'nullable|string|max:255',
+            'imagen' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
             'municipio' => 'nullable|string|max:255',
             'tipo_cocina_id' => 'required|exists:tipo_cocina,id',
         ]);
 
-        Restaurante::create($request->all());
+        // Manejar la subida de imagen
+        if ($request->hasFile('imagen')) {
+            $imagen = $request->file('imagen');
+            $nombreImagen = time() . '.' . $imagen->getClientOriginalExtension();
+            $imagen->move(public_path('images/restaurantes'), $nombreImagen);
+        }
+
+        // Crear el restaurante
+        Restaurante::create([
+            'nombre_r' => $request->nombre_r,
+            'descripcion' => $request->descripcion,
+            'direccion' => $request->direccion,
+            'precio_promedio' => $request->precio_promedio,
+            'imagen' => $nombreImagen ?? null,
+            'municipio' => $request->municipio,
+            'tipo_cocina_id' => $request->tipo_cocina_id,
+        ]);
 
         return redirect()->route('restaurantes.index')->with('success', 'Restaurante creado con éxito.');
     }
