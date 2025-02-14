@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RestauranteController;
+use App\Http\Controllers\UsuarioController;
 
 Route::get('/', [AuthController::class, 'showWelcomePage'])->name('home');
 
@@ -32,6 +33,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/restaurantes/{restaurante}/editar', [RestauranteController::class, 'edit'])->name('restaurantes.edit');
     Route::put('/restaurantes/{restaurante}', [RestauranteController::class, 'update'])->name('restaurantes.update');
     Route::delete('/restaurantes/{restaurante}', [RestauranteController::class, 'destroy'])->name('restaurantes.destroy');
+    // Rutas de administración de usuarios
+    Route::get('/usuarios', [UsuarioController::class, 'index'])->name('usuarios.index');
+    Route::get('/usuarios/crear', [UsuarioController::class, 'create'])->name('usuarios.create');
+    Route::post('/usuarios', [UsuarioController::class, 'store'])->name('usuarios.store');
+    Route::get('/usuarios/{usuario}/editar', [UsuarioController::class, 'edit'])->name('usuarios.edit');
+    Route::put('/usuarios/{usuario}', [UsuarioController::class, 'update'])->name('usuarios.update');
+    Route::delete('/usuarios/{usuario}', [UsuarioController::class, 'destroy'])->name('usuarios.destroy');
 });
 // ------------------------------------------------------------------------------------------------------------------------
 
