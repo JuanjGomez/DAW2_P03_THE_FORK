@@ -8,6 +8,9 @@ use App\Models\TipoCocina;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use App\Models\Usuario;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\RestauranteModificado;
+use Illuminate\Support\Facades\Log;
 
 class RestauranteController extends Controller
 {
@@ -114,6 +117,20 @@ class RestauranteController extends Controller
     {
         DB::beginTransaction();
         try {
+            // Guardamos los valores antiguos
+            $cambios = [];
+            $camposARevisar = ['nombre_r', 'descripcion', 'direccion', 'precio_promedio', 'municipio', 'tipo_cocina_id'];
+            
+            foreach ($camposARevisar as $campo) {
+                if ($request->has($campo) && $request->$campo != $restaurante->$campo) {
+                    $cambios[$campo] = [
+                        'anterior' => $restaurante->$campo,
+                        'nuevo' => $request->$campo
+                    ];
+                }
+            }
+
+            // Validación existente...
             $request->validate([
                 'nombre_r' => 'required|string|max:75|unique:restaurantes,nombre_r,' . $restaurante->id,
                 'descripcion' => 'nullable|string|max:255',
@@ -130,9 +147,23 @@ class RestauranteController extends Controller
                 $nombreImagen = time() . '.' . $imagen->getClientOriginalExtension();
                 $imagen->move(public_path('images/restaurantes'), $nombreImagen);
                 $restaurante->imagen = $nombreImagen;
+                $cambios['imagen'] = [
+                    'anterior' => 'imagen anterior',
+                    'nuevo' => 'nueva imagen'
+                ];
             }
 
             $restaurante->update($request->except('imagen'));
+
+            // Dentro del método update, después de guardar los cambios
+            if (!empty($cambios) && $restaurante->manager) {
+                try {
+                    Mail::to($restaurante->manager->email)
+                        ->send(new RestauranteModificado($restaurante, $cambios));
+                } catch (\Exception $e) {
+                    Log::error('Error enviando email: ' . $e->getMessage());
+                }
+            }
 
             DB::commit();
             return redirect()->route('restaurantes.index')->with('success', 'Restaurante actualizado con éxito.');
