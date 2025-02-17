@@ -60,6 +60,11 @@
         @endforeach
     </div>
 
+    <!-- Paginación -->
+    <div class="pagination">
+        {{ $usuarios->appends(request()->query())->links('pagination::bootstrap-4') }}
+    </div>
+
     <!-- SweetAlerts -->
     @if (session('success'))
         <script>

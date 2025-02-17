@@ -160,4 +160,45 @@ body {
 
 #limpiarFiltros:hover {
     opacity: 0.8;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+    padding: 10px;
+}
+
+.pagination ul {
+    list-style: none;
+    display: flex;
+    gap: 5px;
+}
+
+.pagination li {
+    display: inline-block;
+}
+
+.pagination a, .pagination span {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    text-decoration: none;
+    color: #34495e;
+    transition: background-color 0.3s;
+}
+
+.pagination a:hover {
+    background-color: #f8f9fa;
+}
+
+.pagination .active span {
+    background-color: #34495e;
+    color: #fff;
+    border-color: #34495e;
+}
+
+.pagination .disabled span {
+    color: #ddd;
+    cursor: not-allowed;
 } 

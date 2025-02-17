@@ -26,7 +26,7 @@ class UsuarioController extends Controller
             $query->where('rol_id', $request->rol_id);
         }
 
-        $usuarios = $query->get();
+        $usuarios = $query->paginate(10);
         $roles = Rol::all();
 
         return view('admin.usuarios.index', compact('usuarios', 'roles'));
