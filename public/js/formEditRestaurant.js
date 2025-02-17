@@ -1,18 +1,15 @@
-document.onload = function() {
-    const fileInput = document.getElementById('file');
-    const previewImage = document.getElementById('previewImage');
+const fileInput = document.getElementById('file');
+const previewImage = document.getElementById('previewImage');
 
-    fileInput.onchange = function() {
-        const file = this.files[0];
-
-        if (file && file.type.startsWith('image/')) {
-            const reader = new FileReader();
-
-            reader.onload = function() {
-                previewImage.setAttribute('src', this.result);
-            };
-
-            reader.readAsDataURL(file);
+fileInput.onchange = function(e) {
+    const file = e.target.files[0];
+    if (file && file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            previewImage.src = e.target.result;
         }
-    };
+        reader.readAsDataURL(file);
+    } else {
+        previewImage.src = "/images/upload-icon.png";
+    }
 };

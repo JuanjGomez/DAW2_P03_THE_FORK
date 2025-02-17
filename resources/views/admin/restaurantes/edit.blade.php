@@ -23,7 +23,7 @@
         <div class="form-container">
             <div class="image-upload">
                 <div class="file-upload">
-                    <input type="file" name="imagen" id="file" class="file-input">
+                    <input type="file" name="imagen" id="file" class="file-input" accept="image/jpeg, image/png, image/jpg, image/gif">
                     <label for="file" class="file-label">
                         <img src="{{ asset('images/upload-icon.png') }}" alt="Upload Icon" class="upload-icon" id="previewImage">
                         Subir Imagen

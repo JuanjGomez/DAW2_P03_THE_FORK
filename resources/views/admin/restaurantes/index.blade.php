@@ -27,20 +27,23 @@
         </div>
     </header>
 
-    <div class="search-bar">
-        <input type="text" placeholder="Nombre del restaurante...">
-        <input type="text" placeholder="Tipo de comida...">
-        <input type="text" placeholder="Precio">
-        <select>
-            <option value="">Municipio</option>
-        </select>
-        <button id="buscarRestaurante">BUSCAR</button>
+    <div class="container">
+        <div class="search-bar">
+            <input type="text" placeholder="Nombre del restaurante...">
+            <input type="text" placeholder="Tipo de comida...">
+            <input type="text" placeholder="Precio">
+            <select>
+                <option value="">Municipio</option>
+            </select>
+            <button id="buscarRestaurante">BUSCAR</button>
+        </div>
+
+        <div class="actions">
+            <a href="{{ route('restaurantes.create') }}" class="button" id="crearRestaurante">CREAR RESTAURANTE</a>
+            <a href="{{ route('usuarios.index') }}" class="button" id="verUsuarios">VER USUARIOS</a>
+        </div>
     </div>
 
-    <div class="actions">
-        <a href="{{ route('restaurantes.create') }}" class="button" id="crearRestaurante">CREAR RESTAURANTE</a>
-        <a href="{{ route('usuarios.index') }}" class="button" id="verUsuarios">VER USUARIOS</a>
-    </div>
 
     <div class="restaurant-grid">
         @foreach($restaurantes as $restaurante)
