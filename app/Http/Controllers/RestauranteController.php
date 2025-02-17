@@ -37,8 +37,9 @@ class RestauranteController extends Controller
 
         $restaurantes = $query->paginate(10);
         $municipios = Restaurante::distinct()->pluck('municipio');
+        $tiposCocina = TipoCocina::all();
 
-        return view('admin.restaurantes.index', compact('restaurantes', 'municipios'));
+        return view('admin.restaurantes.index', compact('restaurantes', 'municipios', 'tiposCocina'));
     }
 
     // Mostrar formulario de creación
