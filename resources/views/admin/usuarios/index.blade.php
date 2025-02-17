@@ -17,6 +17,13 @@
         <h1>Administración de Usuarios</h1>
         <div class="user-menu">
             <img src="{{ asset('images/user.png') }}" alt="Foto de usuario" class="user-logo">
+            <div class="dropdown-menu">
+                <a href="{{ route('perfil') }}" class="dropdown-item">Perfil</a>
+                <form method="POST" action="{{ route('logout') }}" class="dropdown-item">
+                    @csrf
+                    <button type="submit" class="logout-button">Cerrar sesión</button>
+                </form>
+            </div>
         </div>
     </header>
 

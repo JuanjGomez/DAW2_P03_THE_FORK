@@ -68,17 +68,17 @@
 }
 
 .search-button {
-    background-color: #02665d;
-    color: white;
+    background-color: #019688; /* Nuevo color verde */
+    color: #fff;
     border: none;
-    border-radius: 0.25rem;
-    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    padding: 10px 20px;
     cursor: pointer;
-    font-size: 0.875rem;
+    transition: background-color 0.3s;
 }
 
 .search-button:hover {
-    background-color: #01524b;
+    background-color: #019688; /* Color más oscuro al hacer hover */
 }
 
 .clear-filters-button {
