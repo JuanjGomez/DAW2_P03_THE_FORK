@@ -7,6 +7,7 @@ use App\Models\Restaurante;
 use App\Models\TipoCocina;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
+use App\Models\Usuario;
 
 class RestauranteController extends Controller
 {
@@ -45,7 +46,8 @@ class RestauranteController extends Controller
     public function create()
     {
         $tiposCocina = TipoCocina::all();
-        return view('admin.restaurantes.createRestaurante', compact('tiposCocina'));
+        $managers = Usuario::where('rol_id', 2)->doesntHave('restaurante')->get();
+        return view('admin.restaurantes.createRestaurante', compact('tiposCocina', 'managers'));
     }
 
     // Guardar nuevo restaurante
@@ -61,6 +63,7 @@ class RestauranteController extends Controller
                 'imagen' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
                 'municipio' => 'nullable|string|max:255',
                 'tipo_cocina_id' => 'required|exists:tipo_cocina,id',
+                'manager_id' => 'nullable|exists:usuarios,id'
             ]);
 
             // Manejar la subida de imagen
@@ -79,6 +82,7 @@ class RestauranteController extends Controller
                 'imagen' => $nombreImagen ?? null,
                 'municipio' => $request->municipio,
                 'tipo_cocina_id' => $request->tipo_cocina_id,
+                'manager_id' => $request->manager_id
             ]);
 
             DB::commit();

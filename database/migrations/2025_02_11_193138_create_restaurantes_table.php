@@ -20,7 +20,9 @@ return new class extends Migration
             $table->string('imagen', 255)->nullable();
             $table->string('municipio', 255)->nullable();
             $table->unsignedBigInteger('tipo_cocina_id');
+            $table->unsignedBigInteger('manager_id')->nullable();
             $table->foreign('tipo_cocina_id')->references('id')->on('tipo_cocina');
+            $table->foreign('manager_id')->references('id')->on('usuarios');
             $table->timestamps();
         });
     }
