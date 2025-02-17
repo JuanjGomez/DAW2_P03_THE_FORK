@@ -72,7 +72,7 @@ class RestauranteController extends Controller
             }
 
             // Crear el restaurante
-            Restaurante::create([
+            $restaurante = Restaurante::create([
                 'nombre_r' => $request->nombre_r,
                 'descripcion' => $request->descripcion,
                 'direccion' => $request->direccion,
@@ -83,11 +83,17 @@ class RestauranteController extends Controller
             ]);
 
             DB::commit();
-            return redirect()->route('restaurantes.index')->with('success', 'Restaurante creado con éxito.');
+            return response()->json([
+                'success' => true,
+                'message' => 'Restaurante creado con éxito',
+                'data' => $restaurante
+            ]);
         } catch (\Exception $e) {
             DB::rollBack();
-            // Manejo del error
-            return redirect()->back()->with('error', 'Error al crear el restaurante. Por favor, inténtelo más tarde.');
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al crear el restaurante'
+            ], 500);
         }
     }
 
@@ -123,11 +129,17 @@ class RestauranteController extends Controller
             $restaurante->update($request->except('imagen'));
 
             DB::commit();
-            return redirect()->route('restaurantes.index')->with('success', 'Restaurante actualizado con éxito.');
+            return response()->json([
+                'success' => true,
+                'message' => 'Restaurante actualizado con éxito',
+                'data' => $restaurante
+            ]);
         } catch (\Exception $e) {
             DB::rollBack();
-            // Manejo del error
-            return redirect()->back()->with('error', 'Error al actualizar el restaurante. Por favor, inténtelo más tarde.');
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al actualizar el restaurante'
+            ], 500);
         }
     }
 
