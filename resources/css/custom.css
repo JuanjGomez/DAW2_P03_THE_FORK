@@ -512,3 +512,47 @@
 .profile-button:hover {
     background-color: #01524b;
 }
+
+.sorting-container {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 0 20px;
+}
+
+.sort-buttons {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+}
+
+.sort-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 20px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background-color: #f8f9fa;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.95rem;
+}
+
+.sort-button:hover {
+    background-color: #e9ecef;
+    border-color: #ccc;
+    transform: translateY(-2px);
+}
+
+.sort-button.active {
+    background-color: #00665A;
+    color: white;
+    border-color: #00665A;
+    box-shadow: 0 2px 8px rgba(0,102,90,0.2);
+}
+
+.sort-button i {
+    font-size: 0.9rem;
+}

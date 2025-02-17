@@ -243,7 +243,17 @@ class AuthController extends Controller
             });
         }
 
-        $restaurantes = $query->orderBy('precio_promedio', 'desc')->paginate(10);
+        // Ordenación
+        if ($request->has('sort') && $request->has('order')) {
+            if ($request->sort === 'rating') {
+                $query->withAvg('ratings', 'rating')
+                      ->orderBy('ratings_avg_rating', $request->order);
+            } else {
+                $query->orderBy($request->sort, $request->order);
+            }
+        }
+
+        $restaurantes = $query->paginate(10);
 
         return view('partials.restaurant_list', ['restaurantes' => $restaurantes])->render();
     }

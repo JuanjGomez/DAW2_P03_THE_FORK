@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.16.0/dist/sweetalert2.min.css" integrity="sha256-YiFT9lvNOGMbi29lCphiiB6iZOnEnj6SJ4R6Y1n8ukM=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <title>Principal</title>
     @vite(['resources/css/app.css', 'resources/css/custom.css', 'resources/js/app.js'])
 </head>
@@ -54,6 +55,24 @@
             </div>
         </div>
     </header>
+
+    <!-- Ordenación -->
+    <div class="sorting-container">
+        <div class="sort-buttons">
+            <button type="button" class="sort-button" data-sort="precio_promedio" data-order="desc">
+                <i class="fas fa-sort-amount-down"></i> Precio (Mayor a menor)
+            </button>
+            <button type="button" class="sort-button" data-sort="precio_promedio" data-order="asc">
+                <i class="fas fa-sort-amount-up"></i> Precio (Menor a mayor)
+            </button>
+            <button type="button" class="sort-button" data-sort="rating" data-order="desc">
+                <i class="fas fa-star"></i> Valoración (Mayor a menor)
+            </button>
+            <button type="button" class="sort-button" data-sort="rating" data-order="asc">
+                <i class="fas fa-star"></i> Valoración (Menor a mayor)
+            </button>
+        </div>
+    </div>
 
     <!-- Restaurantes -->
     <div class="restaurant-grid">
