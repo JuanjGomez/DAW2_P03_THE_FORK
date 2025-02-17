@@ -52,7 +52,7 @@ class UsuarioController extends Controller
                 'rol_id' => 'required|exists:roles,id',
             ]);
 
-            $usuario = Usuario::create([
+            Usuario::create([
                 'username' => $request->username,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
@@ -60,17 +60,11 @@ class UsuarioController extends Controller
             ]);
 
             DB::commit();
-            return response()->json([
-                'success' => true,
-                'message' => 'Usuario creado con éxito',
-                'data' => $usuario
-            ]);
+            return redirect()->route('usuarios.index')->with('success', 'Usuario creado con éxito.');
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json([
-                'success' => false,
-                'message' => 'Error al crear el usuario'
-            ], 500);
+            // Manejo del error
+            return redirect()->back()->with('error', 'Hubo un error al crear el usuario.');
         }
     }
 
@@ -93,23 +87,24 @@ class UsuarioController extends Controller
                 'rol_id' => 'required|exists:roles,id',
             ]);
 
-            $usuario->update([
+            $data = [
                 'username' => $request->username,
                 'email' => $request->email,
-                'password' => $request->password ? Hash::make($request->password) : $usuario->password,
                 'rol_id' => $request->rol_id,
-            ]);
+            ];
+
+            if ($request->password) {
+                $data['password'] = Hash::make($request->password);
+            }
+
+            $usuario->update($data);
 
             DB::commit();
-            
-            // Devuelve la vista actualizada
-            return view('admin.usuarios.index', [
-                'usuarios' => Usuario::with('rol')->paginate(10),
-                'roles' => Rol::all()
-            ]);
+            return redirect()->route('usuarios.index')->with('success', 'Usuario actualizado con éxito.');
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('error', 'Error al actualizar el usuario');
+            // Manejo del error
+            return redirect()->back()->with('error', 'Hubo un error al actualizar el usuario.');
         }
     }
 
@@ -120,17 +115,11 @@ class UsuarioController extends Controller
         try {
             $usuario->delete();
             DB::commit();
-            return response()->json([
-                'success' => true,
-                'message' => 'Usuario eliminado con éxito',
-                'data' => $usuario
-            ]);
+            return redirect()->route('usuarios.index')->with('success', 'Usuario eliminado con éxito.');
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json([
-                'success' => false,
-                'message' => 'Error al eliminar el usuario'
-            ], 500);
+            // Manejo del error
+            return redirect()->back()->with('error', 'Hubo un error al eliminar el usuario.');
         }
     }
 }

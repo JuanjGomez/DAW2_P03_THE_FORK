@@ -66,6 +66,7 @@
             </div>
         </div>
     </form>
+    @include('partials.footer')
     <script src="{{ asset('js/formEditRestaurant.js') }}"></script>
 </body>
 </html>

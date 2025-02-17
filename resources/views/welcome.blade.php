@@ -50,5 +50,6 @@
                 @endforeach
             </div>
         </div>
+        @include('partials.footer')
     </body>
 </html>
