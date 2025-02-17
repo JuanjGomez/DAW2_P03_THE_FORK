@@ -21,15 +21,17 @@
     </header>
 
     <div class="search-bar">
-        <input type="text" placeholder="Nombre de usuario...">
-        <input type="text" placeholder="Email...">
-        <select>
-            <option value="">Rol</option>
-            @foreach($roles as $rol)
-                <option value="{{ $rol->id }}">{{ $rol->rol }}</option>
-            @endforeach
-        </select>
-        <button id="buscarUsuario">BUSCAR</button>
+        <form action="{{ route('usuarios.index') }}" method="GET">
+            <input type="text" name="username" placeholder="Nombre de usuario..." value="{{ request('username') }}">
+            <input type="text" name="email" placeholder="Email..." value="{{ request('email') }}">
+            <select name="rol_id">
+                <option value="">Rol</option>
+                @foreach($roles as $rol)
+                    <option value="{{ $rol->id }}" {{ request('rol_id') == $rol->id ? 'selected' : '' }}>{{ $rol->rol }}</option>
+                @endforeach
+            </select>
+            <button type="submit" id="buscarUsuario">BUSCAR</button>
+        </form>
     </div>
 
     <div class="actions">

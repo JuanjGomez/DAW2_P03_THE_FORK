@@ -10,10 +10,25 @@ use Illuminate\Support\Facades\Hash;
 class UsuarioController extends Controller
 {
     // Mostrar lista de usuarios
-    public function index()
+    public function index(Request $request)
     {
-        $usuarios = Usuario::with('rol')->get();
+        $query = Usuario::with('rol');
+
+        if ($request->has('username') && $request->username != '') {
+            $query->where('username', 'like', '%' . $request->username . '%');
+        }
+
+        if ($request->has('email') && $request->email != '') {
+            $query->where('email', 'like', '%' . $request->email . '%');
+        }
+
+        if ($request->has('rol_id') && $request->rol_id != '') {
+            $query->where('rol_id', $request->rol_id);
+        }
+
+        $usuarios = $query->get();
         $roles = Rol::all();
+
         return view('admin.usuarios.index', compact('usuarios', 'roles'));
     }
 
