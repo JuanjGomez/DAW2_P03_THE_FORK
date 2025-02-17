@@ -62,20 +62,13 @@
 
     <!-- Ordenación -->
     <div class="sorting-container">
-        <div class="sort-buttons">
-            <button type="button" class="sort-button" data-sort="precio_promedio" data-order="desc">
-                <i class="fas fa-sort-amount-down"></i> Precio (Mayor a menor)
-            </button>
-            <button type="button" class="sort-button" data-sort="precio_promedio" data-order="asc">
-                <i class="fas fa-sort-amount-up"></i> Precio (Menor a mayor)
-            </button>
-            <button type="button" class="sort-button" data-sort="rating" data-order="desc">
-                <i class="fas fa-star"></i> Valoración (Mayor a menor)
-            </button>
-            <button type="button" class="sort-button" data-sort="rating" data-order="asc">
-                <i class="fas fa-star"></i> Valoración (Menor a mayor)
-            </button>
-        </div>
+        <select class="sort-select filter-input" onchange="sortRestaurants(this)">
+            <option value="">Ordenar por</option>
+            <option value="precio_promedio-desc">Precio (Mayor a menor)</option>
+            <option value="precio_promedio-asc">Precio (Menor a mayor)</option>
+            <option value="rating-desc">Valoración (Mayor a menor)</option>
+            <option value="rating-asc">Valoración (Menor a mayor)</option>
+        </select>
     </div>
 
     <!-- Restaurantes -->

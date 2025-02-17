@@ -27,6 +27,10 @@
         </div>
     </header>
 
+    <div class="salida">
+        <a href="{{ route('principal') }}"><img src="{{ asset('images/izquierda.png') }}" alt="Logo de The Fork" class="logo"></a>
+    </div>
+
     <!-- Contenido principal -->
     <div class="restaurant-container">
         <!-- Imagen del restaurante -->
@@ -54,7 +58,7 @@
                         <textarea name="comentario" placeholder="Escribe tu comentario..." class="comment-input">{{ $userRating->comentario ?? '' }}</textarea>
                         <div class="stars">
                             @for ($i = 5; $i >= 1; $i--)
-                                <input type="radio" id="star{{ $i }}" name="rating" value="{{ $i }}" 
+                                <input type="radio" id="star{{ $i }}" name="rating" value="{{ $i }}"
                                     {{ $userRating && $userRating->rating == $i ? 'checked' : '' }} />
                                 <label for="star{{ $i }}" title="{{ $i }} estrellas">&#9733;</label>
                             @endfor
@@ -92,4 +96,4 @@
         @endforeach
     </div>
 </body>
-</html> 
+</html>
