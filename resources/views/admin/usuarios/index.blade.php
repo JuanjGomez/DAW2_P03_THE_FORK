@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
     <!-- Styles / Scripts -->
-    @vite(['resources/css/app.css', 'resources/css/custom.css', 'resources/css/crudUnificado.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css', 'resources/css/custom.css', 'resources/css/crudUnificado.css', 'resources/js/app.js', 'resources/js/usuarios.js'])
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.16.0/dist/sweetalert2.min.css">
     <!-- Agregar meta tag para CSRF -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -61,7 +61,7 @@
             <div class="card-actions">
                 <a href="#" class="button edit" data-bs-toggle="modal" data-bs-target="#editarUsuarioModal-{{ $usuario->id }}">EDITAR</a>
                 <form id="formEliminar-{{ $usuario->id }}" method="POST" action="{{ route('usuarios.destroy', $usuario->id) }}">
-                    <button type="button" class="button delete" onclick="confirmarEliminacion('{{ $usuario->id }}')">ELIMINAR</button>
+                    <button type="button" class="button delete" data-bs-toggle="modal" data-bs-target="#eliminarUsuarioModal-{{ $usuario->id }}">ELIMINAR</button>
                 </form>
             </div>
         </div>
@@ -96,19 +96,23 @@
                         @csrf
                         <div class="form-group mb-3">
                             <label for="username">Nombre de usuario</label>
-                            <input type="text" name="username" id="username" class="form-control" required>
+                            <input type="text" name="username" id="username" class="form-control" required oninput="validateUsername(this)">
+                            <span class="error-message" id="username-error"></span>
                         </div>
                         <div class="form-group mb-3">
                             <label for="email">Email</label>
-                            <input type="email" name="email" id="email" class="form-control" required>
+                            <input type="email" name="email" id="email" class="form-control" required oninput="validateEmailInput(this)">
+                            <span class="error-message" id="email-error"></span>
                         </div>
                         <div class="form-group mb-3">
                             <label for="password">Contraseña</label>
-                            <input type="password" name="password" id="password" class="form-control" required>
+                            <input type="password" name="password" id="password" class="form-control" required oninput="validatePassword(this)">
+                            <span class="error-message" id="password-error"></span>
                         </div>
                         <div class="form-group mb-3">
                             <label for="password_confirmation">Confirmar Contraseña</label>
-                            <input type="password" name="password_confirmation" id="password_confirmation" class="form-control" required>
+                            <input type="password" name="password_confirmation" id="password_confirmation" class="form-control" required oninput="validatePasswordConfirmation(this)">
+                            <span class="error-message" id="password-confirmation-error"></span>
                         </div>
                         <div class="form-group mb-3">
                             <label for="rol_id">Rol</label>
@@ -200,5 +204,14 @@
         </div>
     </div>
     @endforeach
+    @if (session('success'))
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: '¡Éxito!',
+            text: "{{ session('success') }}"
+        });
+    </script>
+    @endif
 </body>
 </html>

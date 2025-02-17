@@ -197,6 +197,12 @@ h1 {
     opacity: 0.9;
 }
 
+.error-message {
+    color: red;
+    font-size: 12px;
+    margin-top: 5px;
+}
+
 /* Responsive Styles */
 @media (max-width: 768px) {
     .grid-container {
@@ -231,7 +237,6 @@ h1 {
     }
 
     .search-bar {
-        padding-left: 20px;
         display: flex;
         flex-direction: column;
         margin: 10px;

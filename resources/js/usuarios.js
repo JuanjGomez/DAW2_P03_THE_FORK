@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
         crearForm.addEventListener('submit', function(e) {
             e.preventDefault();
             const formData = new FormData(this);
-            
+
             fetch(this.action, {
                 method: 'POST',
                 body: formData,
@@ -18,10 +18,7 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    const crearModal = bootstrap.Modal.getInstance(document.getElementById('crearUsuarioModal'));
-                    crearModal.hide();
-                    crearForm.reset();
-                    agregarUsuarioALista(data.data);
+                    window.location.href = '/usuarios';
                 }
             })
             .catch(error => console.error('Error:', error));
@@ -29,30 +26,59 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Eliminar usuario
-    const eliminarForms = document.querySelectorAll('[id^="formEliminar-"]');
-    eliminarForms.forEach(form => {
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const formData = new FormData(this);
-            
-            fetch(this.action, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-CSRF-TOKEN': csrfToken,
-                    'X-HTTP-Method-Override': 'DELETE'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    const card = document.querySelector(`.card[data-id="${data.data.id}"]`);
-                    if (card) {
-                        card.remove();
+    const eliminarButtons = document.querySelectorAll('.button.delete');
+    eliminarButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const userId = this.closest('.user-card').dataset.id;
+            const modal = document.getElementById(`eliminarUsuarioModal-${userId}`);
+            const form = modal.querySelector('form');
+
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                const formData = new FormData(this);
+                const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+
+                fetch(this.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'X-HTTP-Method-Override': 'DELETE'
                     }
-                }
-            })
-            .catch(error => console.error('Error:', error));
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Cerrar el modal
+                        const bootstrapModal = bootstrap.Modal.getInstance(modal);
+                        bootstrapModal.hide();
+
+                        // Eliminar la tarjeta del usuario
+                        const userCard = document.querySelector(`.card[data-id="${userId}"]`);
+                        if (userCard) {
+                            userCard.remove();
+                        }
+
+                        // Mostrar mensaje de éxito
+                        Swal.fire({
+                            icon: 'success',
+                            title: '¡Éxito!',
+                            text: 'Usuario eliminado correctamente'
+                        });
+                    } else {
+                        console.error('Error:', data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error inesperado:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Ocurrió un error inesperado'
+                    });
+                });
+            });
         });
     });
 
@@ -61,7 +87,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const card = document.createElement('div');
         card.className = 'card user-card';
         card.setAttribute('data-id', usuario.id);
-        
+
         card.innerHTML = `
             <div class="user-info">
                 <h2>${usuario.username}</h2>
@@ -75,7 +101,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 </form>
             </div>
         `;
-        
+
         gridContainer.prepend(card);
     }
 
@@ -85,7 +111,7 @@ document.addEventListener('DOMContentLoaded', function() {
         form.addEventListener('submit', function(e) {
             e.preventDefault();
             const formData = new FormData(this);
-            
+
             fetch(this.action, {
                 method: 'POST',
                 body: formData,
@@ -98,7 +124,7 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(html => {
                 // Reemplazar el contenido de la página con la nueva vista
                 document.documentElement.innerHTML = html;
-                
+
                 // Mostrar mensaje de éxito
                 Swal.fire({
                     icon: 'success',
@@ -141,4 +167,67 @@ document.addEventListener('DOMContentLoaded', function() {
             modal.show();
         });
     });
-}); 
+
+    const usernameInput = document.getElementById('username');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const passwordConfirmationInput = document.getElementById('password_confirmation');
+
+    usernameInput.addEventListener('input', function() {
+        validateUsername(this);
+    });
+
+    emailInput.addEventListener('input', function() {
+        validateEmailInput(this);
+    });
+
+    passwordInput.addEventListener('input', function() {
+        validatePassword(this);
+    });
+
+    passwordConfirmationInput.addEventListener('input', function() {
+        validatePasswordConfirmation(this);
+    });
+
+    function validateUsername(input) {
+        const errorSpan = document.getElementById('username-error');
+        if (input.value.trim() === '') {
+            errorSpan.textContent = 'El nombre de usuario es obligatorio.';
+        } else {
+            errorSpan.textContent = '';
+        }
+    }
+
+    function validateEmailInput(input) {
+        const errorSpan = document.getElementById('email-error');
+        if (!validateEmail(input.value)) {
+            errorSpan.textContent = 'Por favor, introduce un email válido.';
+        } else {
+            errorSpan.textContent = '';
+        }
+    }
+
+    function validatePassword(input) {
+        const errorSpan = document.getElementById('password-error');
+        if (input.value.length < 8) {
+            errorSpan.textContent = 'La contraseña debe tener al menos 8 caracteres.';
+        } else {
+            errorSpan.textContent = '';
+        }
+    }
+
+    function validatePasswordConfirmation(input) {
+        const errorSpan = document.getElementById('password-confirmation-error');
+        const passwordInput = document.getElementById('password');
+        if (input.value !== passwordInput.value) {
+            errorSpan.textContent = 'Las contraseñas no coinciden.';
+        } else {
+            errorSpan.textContent = '';
+        }
+    }
+
+    function validateEmail(email) {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(email);
+    }
+});

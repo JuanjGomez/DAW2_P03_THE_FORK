@@ -60,11 +60,8 @@ class UsuarioController extends Controller
             ]);
 
             DB::commit();
-            return response()->json([
-                'success' => true,
-                'message' => 'Usuario creado con éxito',
-                'data' => $usuario
-            ]);
+            session()->flash('success', 'Usuario creadi con éxito');
+            return redirect()->route('usuarios.index');
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
@@ -101,15 +98,14 @@ class UsuarioController extends Controller
             ]);
 
             DB::commit();
-            
-            // Devuelve la vista actualizada
-            return view('admin.usuarios.index', [
-                'usuarios' => Usuario::with('rol')->paginate(10),
-                'roles' => Rol::all()
-            ]);
+            session()->flash('success', 'Usuario actualizado con éxito');
+            return redirect()->route('usuarios.index');
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('error', 'Error al actualizar el usuario');
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al actualizar el usuario'
+            ], 500);
         }
     }
 
@@ -123,7 +119,7 @@ class UsuarioController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Usuario eliminado con éxito',
-                'data' => $usuario
+                'data' => ['id' => $usuario->id]
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
