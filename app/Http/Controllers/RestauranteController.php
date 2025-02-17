@@ -98,7 +98,15 @@ class RestauranteController extends Controller
     public function edit(Restaurante $restaurante)
     {
         $tiposCocina = TipoCocina::all();
-        return view('admin.restaurantes.edit', compact('restaurante', 'tiposCocina'));
+        $managers = Usuario::where('rol_id', 2)
+            ->where(function($query) use ($restaurante) {
+                $query->doesntHave('restaurante')
+                      ->orWhereHas('restaurante', function($q) use ($restaurante) {
+                          $q->where('id', $restaurante->id);
+                      });
+            })
+            ->get();
+        return view('admin.restaurantes.edit', compact('restaurante', 'tiposCocina', 'managers'));
     }
 
     // Actualizar restaurante
@@ -114,6 +122,7 @@ class RestauranteController extends Controller
                 'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
                 'municipio' => 'nullable|string|max:255',
                 'tipo_cocina_id' => 'required|exists:tipo_cocina,id',
+                'manager_id' => 'nullable|exists:usuarios,id'
             ]);
 
             if ($request->hasFile('imagen')) {
