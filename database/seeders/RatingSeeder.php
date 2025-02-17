@@ -14,6 +14,29 @@ class RatingSeeder extends Seeder
 
     public function run(): void
     {
-        Rating::factory()->count(50)->create();
+        $ratings = [
+            [
+                'user_id' => 3, // usuario1
+                'restaurante_id' => 1, // La Tagliatella
+                'rating' => 4.5,
+                'comentario' => 'Excelente comida italiana, muy buen servicio.',
+            ],
+            [
+                'user_id' => 3, // usuario1
+                'restaurante_id' => 2, // Sushi Palace
+                'rating' => 5.0,
+                'comentario' => 'El mejor sushi que he probado en la ciudad.',
+            ],
+            [
+                'user_id' => 3, // usuario1
+                'restaurante_id' => 3, // Green Bites
+                'rating' => 4.0,
+                'comentario' => 'Muy buena opción vegana, platos creativos.',
+            ],
+        ];
+
+        foreach ($ratings as $rating) {
+            Rating::create($rating);
+        }
     }
 }

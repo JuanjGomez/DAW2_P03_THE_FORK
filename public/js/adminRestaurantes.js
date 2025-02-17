@@ -15,7 +15,6 @@ if (window.successMessage) {
 // Alert de confirmacion de eliminacion de restaurante
 // Función para confirmar eliminación con SweetAlert2
 function confirmarEliminacion(id) {
-    console.log('Función confirmarEliminacion ejecutada para el ID:', id); // Depuración
     Swal.fire({
         title: '¿Estás seguro?',
         text: '¡No podrás revertir esto!',
@@ -27,7 +26,7 @@ function confirmarEliminacion(id) {
         cancelButtonText: 'Cancelar'
     }).then((result) => {
         if (result.isConfirmed) {
-            console.log('Confirmado, enviando formulario para el ID:', id); // Depuración
+            // Si el usuario confirma, enviamos el formulario manualmente
             document.getElementById(`formEliminar-${id}`).submit();
         }
     });

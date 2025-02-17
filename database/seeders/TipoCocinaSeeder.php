@@ -14,6 +14,19 @@ class TipoCocinaSeeder extends Seeder
 
     public function run(): void
     {
-        TipoCocina::factory()->count(5)->create();
+        $tipos = [
+            ['nombre' => 'Italiana'],
+            ['nombre' => 'Mexicana'],
+            ['nombre' => 'Japonesa'],
+            ['nombre' => 'Vegana'],
+            ['nombre' => 'Tradicional'],
+            ['nombre' => 'Mediterránea'],
+            ['nombre' => 'Asiática'],
+            ['nombre' => 'Fusión'],
+        ];
+
+        foreach ($tipos as $tipo) {
+            TipoCocina::create($tipo);
+        }
     }
 }

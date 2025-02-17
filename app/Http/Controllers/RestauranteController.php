@@ -84,7 +84,7 @@ class RestauranteController extends Controller
                 'descripcion' => 'nullable|string|max:255',
                 'direccion' => 'nullable|string|max:255',
                 'precio_promedio' => 'required|numeric',
-                'imagen' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'imagen' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
                 'municipio' => 'nullable|string|max:255',
                 'tipo_cocina_id' => 'required|exists:tipo_cocina,id',
                 'manager_id' => 'nullable|exists:usuarios,id'
@@ -167,7 +167,7 @@ class RestauranteController extends Controller
                 'descripcion' => 'nullable|string|max:255',
                 'direccion' => 'nullable|string|max:255',
                 'precio_promedio' => 'required|numeric',
-                'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
                 'municipio' => 'nullable|string|max:255',
                 'tipo_cocina_id' => 'required|exists:tipo_cocina,id',
                 'manager_id' => 'nullable|exists:usuarios,id'

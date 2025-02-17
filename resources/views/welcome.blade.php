@@ -41,11 +41,18 @@
         <!-- Popular Restaurants Section -->
         <div class="popular-restaurants">
             <h2 class="popular-title">Restaurantes populares en Barcelona</h2>
-            <div class="restaurant-list">
-                @foreach($restaurantes as $restaurante)
-                    <a href="{{ route('login') }}" class="restaurant-item">
+            <div class="restaurant-grid">
+                @foreach($restaurantes->take(5) as $restaurante)
+                    <a href="{{ route('login') }}" class="restaurant-card">
                         <img src="{{ asset('images/restaurantes/' . $restaurante->imagen) }}" alt="{{ $restaurante->nombre_r }}" class="restaurant-image">
-                        <div class="restaurant-name">{{ $restaurante->nombre_r }}</div>
+                        <div class="restaurant-info">
+                            <div class="restaurant-name">{{ $restaurante->nombre_r }}</div>
+                            <div class="restaurant-type">{{ $restaurante->tipoCocina->nombre }}</div>
+                            <div class="restaurant-price">Precio medio: {{ $restaurante->precio_promedio }}€</div>
+                            <div class="restaurant-rating">
+                                ⭐️ {{ $restaurante->ratings->avg('rating') ?? 0 }} ({{ $restaurante->ratings->count() }} comentarios)
+                            </div>
+                        </div>
                     </a>
                 @endforeach
             </div>
