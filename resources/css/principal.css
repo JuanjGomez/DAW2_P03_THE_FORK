@@ -1,0 +1,350 @@
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+}
+.logo {
+    height: 40px;
+    margin-right: 1rem;
+}
+
+.filters {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.filter-input {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    width: 100%;
+    max-width: 300px;
+    margin-bottom: 10px;
+}
+
+.user-logo {
+    height: 40px;
+    cursor: pointer;
+}
+
+.sorting-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.price-range {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.restaurant-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    padding: 2rem;
+}
+
+.restaurant-card {
+    display: flex;
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.restaurant-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.restaurant-image {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+}
+
+.restaurant-info {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.restaurant-type {
+    font-size: 0.875rem;
+    color: #666;
+}
+
+.restaurant-name {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0.5rem 0;
+}
+
+.restaurant-address {
+    font-size: 0.875rem;
+    color: #666;
+    margin-bottom: 0.5rem;
+}
+
+.restaurant-price {
+    font-size: 0.875rem;
+    color: #666;
+    margin-bottom: 0.5rem;
+}
+
+.restaurant-rating {
+    font-size: 0.875rem;
+    color: #f59e0b;
+    text-align: left !important;
+    margin-right: auto !important;
+    width: 100%;
+    display: block;
+}
+
+.user-menu {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    right: 1rem;
+    top: 60px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 0.25rem;
+    padding: 0.5rem;
+    z-index: 1000;
+}
+
+.user-menu:hover .dropdown-menu {
+    display: block;
+}
+
+.dropdown-item {
+    display: block;
+    padding: 0.25rem 0.5rem;
+    color: #333;
+    text-decoration: none;
+}
+
+.logout-button {
+    background: none;
+    border: none;
+    color: #333;
+    cursor: pointer;
+    padding: 0;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+    gap: 0.5rem;
+}
+
+.pagination .page-item {
+    list-style: none;
+}
+
+.pagination .page-link {
+    padding: 0.5rem 1rem;
+    background-color: #01B2A2;
+    color: white;
+    border-radius: 0.375rem;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.pagination .page-link:hover {
+    background-color: #019688;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #01524B;
+}
+
+.pagination .page-item.disabled .page-link {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.restaurant-container {
+    display: flex;
+    gap: 2rem;
+    padding: 2rem;
+}
+
+.restaurant-image-container {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.restaurant-name {
+    font-size: 2rem;
+    font-weight: 600;
+}
+
+.restaurant-type, .restaurant-address, .restaurant-price, .restaurant-description {
+    font-size: 1rem;
+    color: #666;
+}
+
+.restaurant-rating {
+    font-size: 1.25rem;
+    color: #f59e0b;
+}
+
+.hamburger-menu {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.hamburger-icon {
+    width: 25px;
+    height: 3px;
+    background-color: #333;
+    display: block;
+    margin: 5px 0;
+}
+
+@media (max-width: 430px) {
+    .header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .header-left {
+        order: -1;
+        display: flex;
+        padding: 0.5rem 0;
+    }
+
+    .logo {
+        height: 40px;
+    }
+
+    .user-menu {
+        order: -1;
+        display: flex;
+    }
+
+    .filters {
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        order: 3;
+    }
+
+    .filter-input {
+        width: 90%; /* Para que los inputs ocupen todo el ancho en móviles */
+    }
+    .price-range {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .restaurant-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .restaurant-card {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .restaurant-image {
+        width: 100%;
+        height: auto; /* Para que no se deforme en móviles */
+    }
+    .sorting-container{
+        width: 100%;
+        max-width: 100%;
+        margin-bottom: 10px;
+        align-items: center;
+        justify-content: center;
+        display: flex;
+    }
+
+    .restaurant-info {
+        padding: 1rem;
+        width: 100%;
+    }
+
+    .restaurant-name {
+        font-size: 1.2rem;
+    }
+
+    .restaurant-type, .restaurant-address, .restaurant-price, .restaurant-description {
+        font-size: 0.8rem;
+    }
+
+    .restaurant-rating {
+        font-size: 1rem;
+    }
+
+    .restaurant-image {
+        width: 100%;
+        height: auto;
+    }
+
+    .restaurant-info {
+        padding: 0.5rem;
+    }
+
+    .pagination{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+    }
+
+    .pagination .page-item {
+        list-style: none;
+    }
+
+    .pagination .page-link {
+        padding: 0.5rem 0.5rem;
+    }
+
+    .pagination .page-item.active .page-link {
+        padding: 0.5rem 0.5rem;
+    }
+
+    .pagination .page-item.disabled .page-link {
+        padding: 0.5rem 0.5rem;
+    }
+
+    .hamburger-menu {
+        display: block;
+    }
+
+    .sort-buttons {
+        display: none;
+    }
+
+    .sort-buttons.active {
+        display: flex;
+        flex-direction: column;
+    }
+}

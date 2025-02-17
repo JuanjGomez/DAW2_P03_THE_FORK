@@ -422,6 +422,11 @@
     color: #666;
 }
 
+.salida{
+    padding-top: 20px;
+    padding-left: 30px;
+}
+
 .review-comment {
     margin-top: 0.5rem;
 }
@@ -513,6 +518,162 @@
     background-color: #01524b;
 }
 
+@media (max-width: 430px) {
+    .header {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px;
+    }
+
+    h1{
+        display: none;
+    }
+
+    .logo {
+        height: 30px;
+    }
+
+    .user-menu {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        position: relative;
+    }
+
+    .user-logo {
+        height: 30px; /* Ajusta el tamaño del icono del usuario */
+    }
+
+    .dropdown-menu {
+        order: -1;
+        top: 50px; /* Ajusta la posición del dropdown */
+        right: 0;
+    }
+
+    .login-button {
+        background-color: #00665A;
+        color: white;
+        padding: 10px 15px;
+        border-radius: 5px;
+        text-decoration: none;
+        font-size: 14px;
+    }
+
+    .hero-section {
+        background-color: #004d47;
+        padding: 20px;
+        margin: 0;
+        text-align: center;
+    }
+
+    .hero-container {
+        background-color: #004d47;
+        border-radius: 0;
+        border: none;
+    }
+
+    .hero-title {
+        color: white;
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+
+    .search-form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .search-input {
+        width: 100%;
+        max-width: 300px;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+    }
+
+    .search-button {
+        background-color: #00665A !important;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 5px;
+        border: none;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    .popular-title {
+        font-size: 18px;
+        margin: 20px 0;
+        text-align: center;
+    }
+
+    .hero-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .hero-content img {
+        order: -1;
+        width: 100%;
+        max-width: 300px;
+        margin-bottom: 20px;
+    }
+
+    .search-bar {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+        padding: 0 10px;
+    }
+
+    .restaurant-container{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .search-bar input,
+    .search-bar select,
+    .search-bar button {
+        width: 100%;
+        max-width: 300px;
+        margin-bottom: 10px;
+    }
+
+    .restaurant-card {
+        width: 100%;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    .restaurant-card img {
+        width: 90%;
+        margin: 0 auto;
+    }
+
+    .restaurant-card h2 {
+        text-align: center;
+        padding: 10px;
+        margin: 0;
+    }
+
+    .restaurant-actions {
+        flex-direction: row;
+        justify-content: space-between;
+        width: 95%;
+        padding: 0 10px;
+    }
+}
+
+
 .sorting-container {
     max-width: 1200px;
     margin: 20px auto;
@@ -555,4 +716,148 @@
 
 .sort-button i {
     font-size: 0.9rem;
+}
+
+@media (max-width: 430px) {
+    .header {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px;
+    }
+
+    .logo {
+        height: 30px;
+    }
+
+    .user-menu {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        position: relative;
+    }
+
+    .user-logo {
+        height: 30px; /* Ajusta el tamaño del icono del usuario */
+    }
+
+    .dropdown-menu {
+        order: -1;
+        top: 50px; /* Ajusta la posición del dropdown */
+        right: 0;
+    }
+
+    .login-button {
+        background-color: #00665A;
+        color: white;
+        padding: 10px 15px;
+        border-radius: 5px;
+        text-decoration: none;
+        font-size: 14px;
+    }
+
+    .hero-section {
+        background-color: #004d47;
+        padding: 20px;
+        margin: 0;
+        text-align: center;
+    }
+
+    .hero-container {
+        background-color: #004d47;
+        border-radius: 0;
+        border: none;
+    }
+
+    .hero-title {
+        color: white;
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+
+    .search-form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .search-input {
+        width: 100%;
+        max-width: 300px;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+    }
+
+    .search-button {
+        background-color: #00665A !important;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 5px;
+        border: none;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    .popular-title {
+        font-size: 18px;
+        margin: 20px 0;
+        text-align: center;
+    }
+
+    .hero-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .hero-content img {
+        order: -1;
+        width: 100%;
+        max-width: 300px;
+        margin-bottom: 20px;
+    }
+
+    .search-bar {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+        padding: 0 10px;
+    }
+
+    .search-bar input,
+    .search-bar select,
+    .search-bar button {
+        width: 100%;
+        max-width: 300px;
+        margin-bottom: 10px;
+    }
+
+    .restaurant-card {
+        width: 100%;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    .restaurant-card img {
+        width: 90%;
+        margin: 0 auto;
+    }
+
+    .restaurant-card h2 {
+        text-align: center;
+        padding: 10px;
+        margin: 0;
+    }
+
+    .restaurant-actions {
+        flex-direction: row;
+        justify-content: space-between;
+        width: 95%;
+        padding: 0 10px;
+    }
 }

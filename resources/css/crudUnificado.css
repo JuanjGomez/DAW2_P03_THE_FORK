@@ -209,20 +209,47 @@ h1 {
         overflow-x: hidden;
     }
 
+    .logo {
+        height: 30px;
+    }
+
     .header {
-        flex-direction: column;
+        display: flex;
+        flex-direction: row;
         align-items: center;
-        padding: 15px;
-        width: 100%;
-        box-sizing: border-box;
+        justify-content: space-between;
+        padding: 10px;
+    }
+
+    .user-menu {
+        display: flex;
+        align-items: center;
+    }
+
+    h1{
+        display: none;
     }
 
     .search-bar {
+        padding-left: 20px;
+        display: flex;
         flex-direction: column;
+        margin: 10px;
         gap: 8px;
-        width: 100%;
+        width: 90%;
         padding: 10px;
         box-sizing: border-box;
+        align-items: center;
+        justify-content: center;
+    }
+
+    form{
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        align-items: center;
+        justify-content: center;
     }
 
     .search-bar input,
@@ -246,15 +273,32 @@ h1 {
     }
 
     .actions {
+        display: flex;
         flex-direction: column;
+        align-items: center;
+        gap: 10px;
         width: 100%;
-        padding: 0 15px;
-        box-sizing: border-box;
+        padding: 10px 0;
+        align-items: center;
+        justify-content: center;
+        padding-right: 40px;
     }
 
-    .actions .button {
-        width: 100%;
-        margin: 5px 0;
+    .actions a {
+        width: 90%; /* Ocupa casi todo el ancho disponible */
+        max-width: 300px;
+        text-align: center;
+        padding: 10px;
+        font-size: 14px;
+        border-radius: 5px;
+        text-decoration: none;
+        color: white;
+        background-color: #01B2A2;
+        transition: background-color 0.3s;
+    }
+
+    .actions a:hover {
+        background-color: #019688;
     }
 
     .grid-container {
@@ -269,10 +313,37 @@ h1 {
         box-sizing: border-box;
     }
 
-    .pagination {
+    .pagination{
+        display: flex;
+        justify-content: center;
+        align-items: center;
         width: 100%;
-        padding: 0 15px;
-        box-sizing: border-box;
+    }
+
+    .pagination .page-item {
+        list-style: none;
+    }
+
+    .pagination .page-link {
+        padding: 0.5rem 0.5rem;
+    }
+
+    .pagination .page-item.active .page-link {
+        padding: 0.5rem 0.5rem;
+    }
+
+    .pagination .page-item.disabled .page-link {
+        padding: 0.5rem 0.5rem;
+    }
+
+    .button{
+        width: 90%;
+        max-width: 300px;
+        text-align: center;
+        padding: 10px;
+        font-size: 14px;
+        border-radius: 5px;
+        text-decoration: none;
     }
 }
 
