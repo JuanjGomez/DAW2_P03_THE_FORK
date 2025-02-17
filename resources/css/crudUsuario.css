@@ -145,4 +145,19 @@ body {
     .user-grid {
         grid-template-columns: 1fr;
     }
+}
+
+#limpiarFiltros {
+    background-color: #e74c3c;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: opacity 0.3s;
+}
+
+#limpiarFiltros:hover {
+    opacity: 0.8;
 } 

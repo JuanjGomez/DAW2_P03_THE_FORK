@@ -31,6 +31,7 @@
                 @endforeach
             </select>
             <button type="submit" id="buscarUsuario">BUSCAR</button>
+            <a href="{{ route('usuarios.index') }}" class="button" id="limpiarFiltros">LIMPIAR FILTROS</a>
         </form>
     </div>
 
