@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\ValidationException;
 use App\Models\Restaurante;
 use App\Models\Rating;
+use Illuminate\Support\Facades\DB;
 
 class AuthController extends Controller
 {
@@ -60,28 +61,38 @@ class AuthController extends Controller
 
     // Maneja el proceso de registro
     public function register(Request $request){
-        // Validar los datos del formulario
-        $request->validate([
-            'username' => 'required|string|max:30',
-            'email' => 'required|string|email|max:120|unique:usuarios',
-            'password' => 'required|string|min:8|confirmed',
-        ]);
+        DB::beginTransaction();
+        try {
+            // Validar los datos del formulario
+            $request->validate([
+                'username' => 'required|string|max:30',
+                'email' => 'required|string|email|max:120|unique:usuarios',
+                'password' => 'required|string|min:8|confirmed',
+            ]);
 
-        // Crear el usuario
-        $usuario = Usuario::create([
-            'username' => $request->username,
-            'email'=> $request->email,
-            'password' => Hash::make($request->password),
-            'rol_id' => 3, // Asignacion del rol de standard
-        ]);
+            // Crear el usuario
+            $usuario = Usuario::create([
+                'username' => $request->username,
+                'email'=> $request->email,
+                'password' => Hash::make($request->password),
+                'rol_id' => 3, // Asignacion del rol de standard
+            ]);
 
-        $username = $usuario->username;
+            $username = $usuario->username;
 
-        // Autenticar al usuario y redirigir
-        Auth::login($usuario);
-        // Anadir mensaje de extio en la sesion
-        session()->flash('success', "Bienvenido $username!");
-        return redirect()->route('principal');
+            // Autenticar al usuario y redirigir
+            Auth::login($usuario);
+            // Anadir mensaje de extio en la sesion
+            session()->flash('success', "Bienvenido $username!");
+            DB::commit();
+            return redirect()->route('principal');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            // Manejo del error
+            return back()->withErrors([
+                'email' => 'Hubo un error al procesar el registro. Por favor, inténtelo más tarde.',
+            ]);
+        }
     }
 
 
@@ -195,18 +206,28 @@ class AuthController extends Controller
 
     public function updatePerfil(Request $request)
     {
-        $request->validate([
-            'username' => 'required|string|max:30',
-            'email' => 'required|string|email|max:120|unique:usuarios,email,' . Auth::id(),
-        ]);
+        DB::beginTransaction();
+        try {
+            $request->validate([
+                'username' => 'required|string|max:30',
+                'email' => 'required|string|email|max:120|unique:usuarios,email,' . Auth::id(),
+            ]);
 
-        $user = Auth::user();
-        Usuario::where('id', $user->id)->update([
-            'username' => $request->username,
-            'email' => $request->email
-        ]);
+            $user = Auth::user();
+            Usuario::where('id', $user->id)->update([
+                'username' => $request->username,
+                'email' => $request->email
+            ]);
 
-        return redirect()->route('perfil')->with('success', 'Perfil actualizado correctamente.');
+            DB::commit();
+            return redirect()->route('perfil')->with('success', 'Perfil actualizado correctamente.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            // Manejo del error
+            return back()->withErrors([
+                'email' => 'Hubo un error al actualizar el perfil. Por favor, inténtelo más tarde.',
+            ]);
+        }
     }
 
     public function filterRestaurants(Request $request)

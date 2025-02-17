@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Restaurante;
 use App\Models\TipoCocina;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 
 class RestauranteController extends Controller
 {
@@ -50,35 +51,43 @@ class RestauranteController extends Controller
     // Guardar nuevo restaurante
     public function store(Request $request)
     {
-        $request->validate([
-            'nombre_r' => 'required|string|max:75|unique:restaurantes',
-            'descripcion' => 'nullable|string|max:255',
-            'direccion' => 'nullable|string|max:255',
-            'precio_promedio' => 'required|numeric',
-            'imagen' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'municipio' => 'nullable|string|max:255',
-            'tipo_cocina_id' => 'required|exists:tipo_cocina,id',
-        ]);
+        DB::beginTransaction();
+        try {
+            $request->validate([
+                'nombre_r' => 'required|string|max:75|unique:restaurantes',
+                'descripcion' => 'nullable|string|max:255',
+                'direccion' => 'nullable|string|max:255',
+                'precio_promedio' => 'required|numeric',
+                'imagen' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'municipio' => 'nullable|string|max:255',
+                'tipo_cocina_id' => 'required|exists:tipo_cocina,id',
+            ]);
 
-        // Manejar la subida de imagen
-        if ($request->hasFile('imagen')) {
-            $imagen = $request->file('imagen');
-            $nombreImagen = time() . '.' . $imagen->getClientOriginalExtension();
-            $imagen->move(public_path('images/restaurantes'), $nombreImagen);
+            // Manejar la subida de imagen
+            if ($request->hasFile('imagen')) {
+                $imagen = $request->file('imagen');
+                $nombreImagen = time() . '.' . $imagen->getClientOriginalExtension();
+                $imagen->move(public_path('images/restaurantes'), $nombreImagen);
+            }
+
+            // Crear el restaurante
+            Restaurante::create([
+                'nombre_r' => $request->nombre_r,
+                'descripcion' => $request->descripcion,
+                'direccion' => $request->direccion,
+                'precio_promedio' => $request->precio_promedio,
+                'imagen' => $nombreImagen ?? null,
+                'municipio' => $request->municipio,
+                'tipo_cocina_id' => $request->tipo_cocina_id,
+            ]);
+
+            DB::commit();
+            return redirect()->route('restaurantes.index')->with('success', 'Restaurante creado con éxito.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            // Manejo del error
+            return redirect()->back()->with('error', 'Error al crear el restaurante. Por favor, inténtelo más tarde.');
         }
-
-        // Crear el restaurante
-        Restaurante::create([
-            'nombre_r' => $request->nombre_r,
-            'descripcion' => $request->descripcion,
-            'direccion' => $request->direccion,
-            'precio_promedio' => $request->precio_promedio,
-            'imagen' => $nombreImagen ?? null,
-            'municipio' => $request->municipio,
-            'tipo_cocina_id' => $request->tipo_cocina_id,
-        ]);
-
-        return redirect()->route('restaurantes.index')->with('success', 'Restaurante creado con éxito.');
     }
 
     // Mostrar formulario de edición
@@ -91,33 +100,48 @@ class RestauranteController extends Controller
     // Actualizar restaurante
     public function update(Request $request, Restaurante $restaurante)
     {
-        $request->validate([
-            'nombre_r' => 'required|string|max:75|unique:restaurantes,nombre_r,' . $restaurante->id,
-            'descripcion' => 'nullable|string|max:255',
-            'direccion' => 'nullable|string|max:255',
-            'precio_promedio' => 'required|numeric',
-            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'municipio' => 'nullable|string|max:255',
-            'tipo_cocina_id' => 'required|exists:tipo_cocina,id',
-        ]);
+        DB::beginTransaction();
+        try {
+            $request->validate([
+                'nombre_r' => 'required|string|max:75|unique:restaurantes,nombre_r,' . $restaurante->id,
+                'descripcion' => 'nullable|string|max:255',
+                'direccion' => 'nullable|string|max:255',
+                'precio_promedio' => 'required|numeric',
+                'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'municipio' => 'nullable|string|max:255',
+                'tipo_cocina_id' => 'required|exists:tipo_cocina,id',
+            ]);
 
-        if ($request->hasFile('imagen')) {
-            $imagen = $request->file('imagen');
-            $nombreImagen = time() . '.' . $imagen->getClientOriginalExtension();
-            $imagen->move(public_path('images/restaurantes'), $nombreImagen);
-            $restaurante->imagen = $nombreImagen;
+            if ($request->hasFile('imagen')) {
+                $imagen = $request->file('imagen');
+                $nombreImagen = time() . '.' . $imagen->getClientOriginalExtension();
+                $imagen->move(public_path('images/restaurantes'), $nombreImagen);
+                $restaurante->imagen = $nombreImagen;
+            }
+
+            $restaurante->update($request->except('imagen'));
+
+            DB::commit();
+            return redirect()->route('restaurantes.index')->with('success', 'Restaurante actualizado con éxito.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            // Manejo del error
+            return redirect()->back()->with('error', 'Error al actualizar el restaurante. Por favor, inténtelo más tarde.');
         }
-
-        $restaurante->update($request->except('imagen'));
-
-        return redirect()->route('restaurantes.index')->with('success', 'Restaurante actualizado con éxito.');
     }
 
     // Eliminar restaurante
     public function destroy(Restaurante $restaurante)
     {
-        $restaurante->delete();
-
-        return redirect()->route('restaurantes.index')->with('success', 'Restaurante eliminado con éxito.');
+        DB::beginTransaction();
+        try {
+            $restaurante->delete();
+            DB::commit();
+            return redirect()->route('restaurantes.index')->with('success', 'Restaurante eliminado con éxito.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            // Manejo del error
+            return redirect()->back()->with('error', 'Error al eliminar el restaurante. Por favor, inténtelo más tarde.');
+        }
     }
 }
