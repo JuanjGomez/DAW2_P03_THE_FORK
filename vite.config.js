@@ -22,7 +22,6 @@ export default defineConfig({
                 'resources/js/restaurantes.js',
                 'resources/js/restaurantFilters.js',
                 'resources/js/usuarios.js',
-                'resources/js/adminUsuarios.js'
             ],
             refresh: true,
         }),
