@@ -52,6 +52,16 @@
                 <label for="descripcion">Descripción<br>
                     <textarea name="descripcion" placeholder="Descripción">{{ $restaurante->descripcion }}</textarea>
                 </label>
+                <label for="manager_id">Gerente<br>
+                    <select name="manager_id">
+                        <option value="">Seleccionar gerente</option>
+                        @foreach($managers as $manager)
+                            <option value="{{ $manager->id }}" {{ $restaurante->manager_id == $manager->id ? 'selected' : '' }}>
+                                {{ $manager->username }}
+                            </option>
+                        @endforeach
+                    </select>
+                </label>
                 <button type="submit">GUARDAR CAMBIOS</button>
             </div>
         </div>

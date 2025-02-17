@@ -78,6 +78,16 @@
                     <input type="file" id="imagen" name="imagen" accept="image/*" required>
                 </div>
 
+                <div class="form-group">
+                    <label for="manager_id">GERENTE</label>
+                    <select id="manager_id" name="manager_id">
+                        <option value="">Seleccionar gerente</option>
+                        @foreach($managers as $manager)
+                            <option value="{{ $manager->id }}">{{ $manager->username }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
                 <button type="submit" class="submit-button">AÑADIR RESTAURANTE</button>
             </form>
         </div>

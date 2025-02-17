@@ -22,4 +22,10 @@ class Usuario extends Authenticatable
         return $this->hasMany(Rating::class, 'user_id');
     }
 
+    // Añadir la relación con restaurante
+    public function restaurante()
+    {
+        return $this->hasOne(Restaurante::class, 'manager_id');
+    }
+
 }

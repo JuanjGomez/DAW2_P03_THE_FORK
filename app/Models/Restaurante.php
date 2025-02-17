@@ -9,7 +9,7 @@ class Restaurante extends Model
 {
     use HasFactory;
     protected $table = 'restaurantes';
-    protected $fillable = ['nombre_r', 'descripcion', 'direccion', 'precio_promedio', 'imagen', 'municipio', 'tipo_cocina_id'];
+    protected $fillable = ['nombre_r', 'descripcion', 'direccion', 'precio_promedio', 'imagen', 'municipio', 'tipo_cocina_id', 'manager_id'];
 
     // Relacion con la tabla tipo_cocina
     public function tipoCocina(){
@@ -24,6 +24,12 @@ class Restaurante extends Model
     // Relacion con la tabla notificaciones
     public function notificaciones(){
         return $this->hasMany(Notificacion::class, 'restaurante_id');
+    }
+
+    // Añadir la relación con el manager
+    public function manager()
+    {
+        return $this->belongsTo(Usuario::class, 'manager_id');
     }
 
 }
