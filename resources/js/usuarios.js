@@ -1,26 +1,6 @@
-// Función para confirmar eliminación con SweetAlert2
-function confirmarEliminacion(id) {
-    Swal.fire({
-        title: '¿Estás seguro?',
-        text: '¡No podrás revertir esto!',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Sí, eliminar',
-        cancelButtonText: 'Cancelar'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            // Si el usuario confirma, enviamos el formulario manualmente
-            document.getElementById(`formEliminar-${id}`).submit();
-        }
-    });
-
-    // Evita que el formulario se envíe automáticamente
-    return false;
-}
-
 document.addEventListener('DOMContentLoaded', function() {
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+
     // Crear usuario
     const crearForm = document.getElementById('crearUsuarioForm');
     if (crearForm) {
@@ -32,34 +12,25 @@ document.addEventListener('DOMContentLoaded', function() {
                 method: 'POST',
                 body: formData,
                 headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    'X-CSRF-TOKEN': csrfToken
                 }
             })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // Cerrar el modal de creación
                     const crearModal = bootstrap.Modal.getInstance(document.getElementById('crearUsuarioModal'));
                     crearModal.hide();
-
-                    // Limpiar el formulario
                     crearForm.reset();
-
-                    // Agregar el nuevo usuario dinámicamente
                     agregarUsuarioALista(data.data);
-                } else {
-                    console.error('Error:', data.message);
                 }
             })
-            .catch(error => {
-                console.error('Error inesperado:', error);
-            });
+            .catch(error => console.error('Error:', error));
         });
     }
 
-    // Editar usuario
-    const editarForms = document.querySelectorAll('[id^="editarUsuarioForm-"]');
-    editarForms.forEach(form => {
+    // Eliminar usuario
+    const eliminarForms = document.querySelectorAll('[id^="formEliminar-"]');
+    eliminarForms.forEach(form => {
         form.addEventListener('submit', function(e) {
             e.preventDefault();
             const formData = new FormData(this);
@@ -68,38 +39,29 @@ document.addEventListener('DOMContentLoaded', function() {
                 method: 'POST',
                 body: formData,
                 headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                    'X-HTTP-Method-Override': 'PUT'
+                    'X-CSRF-TOKEN': csrfToken,
+                    'X-HTTP-Method-Override': 'DELETE'
                 }
             })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // Cerrar el modal de edición
-                    const editarModal = bootstrap.Modal.getInstance(document.getElementById(`editarUsuarioModal-${data.data.id}`));
-                    editarModal.hide();
-
-                    // Actualizar la tarjeta del usuario editado
-                    actualizarTarjetaUsuario(data.data);
-                } else {
-                    console.error('Error:', data.message);
+                    const card = document.querySelector(`.card[data-id="${data.data.id}"]`);
+                    if (card) {
+                        card.remove();
+                    }
                 }
             })
-            .catch(error => {
-                console.error('Error inesperado:', error);
-            });
+            .catch(error => console.error('Error:', error));
         });
     });
 
-    // Función para agregar un usuario a la lista
     function agregarUsuarioALista(usuario) {
         const gridContainer = document.querySelector('.grid-container');
-
-        // Crear la tarjeta del usuario
         const card = document.createElement('div');
         card.className = 'card user-card';
         card.setAttribute('data-id', usuario.id);
-
+        
         card.innerHTML = `
             <div class="user-info">
                 <h2>${usuario.username}</h2>
@@ -113,27 +75,47 @@ document.addEventListener('DOMContentLoaded', function() {
                 </form>
             </div>
         `;
-
-        // Agregar el CSRF token y el método DELETE dinámicamente
-        const form = card.querySelector(`#formEliminar-${usuario.id}`);
-        const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
-
-        const csrfInput = document.createElement('input');
-        csrfInput.type = 'hidden';
-        csrfInput.name = '_token';
-        csrfInput.value = csrfToken;
-
-        const methodInput = document.createElement('input');
-        methodInput.type = 'hidden';
-        methodInput.name = '_method';
-        methodInput.value = 'DELETE';
-
-        form.appendChild(csrfInput);
-        form.appendChild(methodInput);
-
-        // Agregar la tarjeta al contenedor
+        
         gridContainer.prepend(card);
     }
+
+    // Editar usuario
+    const editarForms = document.querySelectorAll('[id^="editarUsuarioForm-"]');
+    editarForms.forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            
+            fetch(this.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken,
+                    'X-HTTP-Method-Override': 'PUT'
+                }
+            })
+            .then(response => response.text())
+            .then(html => {
+                // Reemplazar el contenido de la página con la nueva vista
+                document.documentElement.innerHTML = html;
+                
+                // Mostrar mensaje de éxito
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Éxito!',
+                    text: 'Usuario actualizado correctamente'
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Ocurrió un error inesperado'
+                });
+            });
+        });
+    });
 
     // Función para actualizar la tarjeta de un usuario
     function actualizarTarjetaUsuario(usuario) {
@@ -144,4 +126,19 @@ document.addEventListener('DOMContentLoaded', function() {
             card.querySelector('p:nth-of-type(2)').innerHTML = `<strong>Email:</strong> ${usuario.email}`;
         }
     }
+
+    // Manejar la apertura del modal de creación
+    document.getElementById('crearUsuario').addEventListener('click', function() {
+        const modal = new bootstrap.Modal(document.getElementById('crearUsuarioModal'));
+        modal.show();
+    });
+
+    // Manejar la apertura del modal de edición
+    document.querySelectorAll('.button.edit').forEach(button => {
+        button.addEventListener('click', function() {
+            const userId = this.dataset.id;
+            const modal = new bootstrap.Modal(document.getElementById(`editarUsuarioModal-${userId}`));
+            modal.show();
+        });
+    });
 }); 
