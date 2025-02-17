@@ -19,31 +19,51 @@ class RestauranteController extends Controller
     {
         $query = Restaurante::query();
 
-        // Filtro por nombre
         if ($request->has('nombre') && $request->nombre != '') {
             $query->where('nombre_r', 'like', '%' . $request->nombre . '%');
         }
 
-        // Filtro por tipo de comida
         if ($request->has('tipo_comida') && $request->tipo_comida != '') {
-            $query->where('tipo_comida', 'like', '%' . $request->tipo_comida . '%');
+            $query->whereHas('tipoCocina', function ($q) use ($request) {
+                $q->where('nombre', 'like', '%' . $request->tipo_comida . '%');
+            });
         }
 
-        // Filtro por precio
         if ($request->has('precio') && $request->precio != '') {
             $query->where('precio_promedio', '<=', $request->precio);
         }
 
-        // Filtro por municipio
         if ($request->has('municipio') && $request->municipio != '') {
             $query->where('municipio', $request->municipio);
         }
 
+        if ($request->has('tipo_cocina') && $request->tipo_cocina != '') {
+            $query->where('tipo_cocina_id', $request->tipo_cocina);
+        }
+
         $restaurantes = $query->paginate(10);
+
+        if ($request->ajax()) {
+            return view('admin.restaurantes.partials.restaurant-grid', compact('restaurantes'))->render();
+        }
+
         $municipios = Restaurante::distinct()->pluck('municipio');
         $tiposCocina = TipoCocina::all();
+        
+        // Managers para el modal de creación (solo los que no tienen restaurante)
+        $managersDisponibles = Usuario::where('rol_id', 2)
+            ->doesntHave('restaurante')
+            ->get();
+        
+        // Managers para los modales de edición (incluye tanto los disponibles como los ya asignados)
+        $managersEdicion = Usuario::where('rol_id', 2)
+            ->where(function($query) {
+                $query->doesntHave('restaurante')
+                      ->orWhereHas('restaurante');
+            })
+            ->get();
 
-        return view('admin.restaurantes.index', compact('restaurantes', 'municipios', 'tiposCocina'));
+        return view('admin.restaurantes.index', compact('restaurantes', 'municipios', 'tiposCocina', 'managersDisponibles', 'managersEdicion'));
     }
 
     // Mostrar formulario de creación
@@ -90,11 +110,8 @@ class RestauranteController extends Controller
             ]);
 
             DB::commit();
-            return response()->json([
-                'success' => true,
-                'message' => 'Restaurante creado con éxito',
-                'data' => $restaurante
-            ]);
+            session()->flash('success', 'Restaurante actualizado con éxito');
+            return redirect()->route('restaurantes.index');
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
@@ -111,9 +128,7 @@ class RestauranteController extends Controller
         $managers = Usuario::where('rol_id', 2)
             ->where(function($query) use ($restaurante) {
                 $query->doesntHave('restaurante')
-                      ->orWhereHas('restaurante', function($q) use ($restaurante) {
-                          $q->where('id', $restaurante->id);
-                      });
+                      ->orWhere('id', $restaurante->manager_id);
             })
             ->get();
         return view('admin.restaurantes.edit', compact('restaurante', 'tiposCocina', 'managers'));
@@ -124,16 +139,25 @@ class RestauranteController extends Controller
     {
         DB::beginTransaction();
         try {
-            // Guardamos los valores antiguos
+            // Dentro del método update, modifica la parte de los cambios
             $cambios = [];
-            $camposARevisar = ['nombre_r', 'descripcion', 'direccion', 'precio_promedio', 'municipio', 'tipo_cocina_id'];
+            $camposARevisar = ['nombre_r', 'descripcion', 'direccion', 'precio_promedio', 'municipio', 'tipo_cocina_id', 'manager_id'];
             
             foreach ($camposARevisar as $campo) {
                 if ($request->has($campo) && $request->$campo != $restaurante->$campo) {
-                    $cambios[$campo] = [
-                        'anterior' => $restaurante->$campo,
-                        'nuevo' => $request->$campo
-                    ];
+                    if ($campo === 'tipo_cocina_id') {
+                        $tipoCocinaAnterior = TipoCocina::find($restaurante->tipo_cocina_id);
+                        $tipoCocinaNuevo = TipoCocina::find($request->tipo_cocina_id);
+                        $cambios['tipo de cocina'] = [
+                            'anterior' => $tipoCocinaAnterior ? $tipoCocinaAnterior->nombre : 'No definido',
+                            'nuevo' => $tipoCocinaNuevo ? $tipoCocinaNuevo->nombre : 'No definido'
+                        ];
+                    } else {
+                        $cambios[$campo] = [
+                            'anterior' => $restaurante->$campo,
+                            'nuevo' => $request->$campo
+                        ];
+                    }
                 }
             }
 
@@ -162,22 +186,23 @@ class RestauranteController extends Controller
 
             $restaurante->update($request->except('imagen'));
 
-            // Dentro del método update, después de guardar los cambios
-            if (!empty($cambios) && $restaurante->manager) {
-                try {
-                    Mail::to($restaurante->manager->email)
-                        ->send(new RestauranteModificado($restaurante, $cambios));
-                } catch (\Exception $e) {
-                    Log::error('Error enviando email: ' . $e->getMessage());
+            // Justo antes del commit, añade un log para debug
+            if (!empty($cambios)) {
+                Log::info('Cambios detectados:', $cambios);
+                if ($restaurante->manager) {
+                    try {
+                        Mail::to($restaurante->manager->email)
+                            ->send(new RestauranteModificado($restaurante, $cambios));
+                        Log::info('Email enviado a: ' . $restaurante->manager->email);
+                    } catch (\Exception $e) {
+                        Log::error('Error enviando email: ' . $e->getMessage());
+                    }
                 }
             }
 
             DB::commit();
-            return response()->json([
-                'success' => true,
-                'message' => 'Restaurante actualizado con éxito',
-                'data' => $restaurante
-            ]);
+            session()->flash('success', 'Restaurante actualizado con éxito');
+            return redirect()->route('restaurantes.index');
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
@@ -200,5 +225,32 @@ class RestauranteController extends Controller
             // Manejo del error
             return redirect()->back()->with('error', 'Error al eliminar el restaurante. Por favor, inténtelo más tarde.');
         }
+    }
+
+    public function filterRestaurants(Request $request)
+    {
+        $query = Restaurante::query();
+
+        if ($request->has('nombre') && $request->nombre != '') {
+            $query->where('nombre_r', 'like', '%' . $request->nombre . '%');
+        }
+
+        if ($request->has('tipo_comida') && $request->tipo_comida != '') {
+            $query->whereHas('tipoCocina', function ($q) use ($request) {
+                $q->where('nombre', 'like', '%' . $request->tipo_comida . '%');
+            });
+        }
+
+        if ($request->has('precio') && $request->precio != '') {
+            $query->where('precio_promedio', '<=', $request->precio);
+        }
+
+        if ($request->has('municipio') && $request->municipio != '') {
+            $query->where('municipio', $request->municipio);
+        }
+
+        $restaurantes = $query->paginate(10);
+
+        return view('admin.restaurantes.partials.restaurant-grid', compact('restaurantes'))->render();
     }
 }

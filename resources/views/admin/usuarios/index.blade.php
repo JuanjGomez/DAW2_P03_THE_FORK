@@ -10,9 +10,6 @@
     <!-- Styles / Scripts -->
     @vite(['resources/css/app.css', 'resources/css/custom.css', 'resources/css/crudUnificado.css', 'resources/js/app.js', 'resources/js/usuarios.js'])
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.16.0/dist/sweetalert2.min.css">
-    <!-- Agregar meta tag para CSRF -->
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
     <header class="header">
@@ -46,13 +43,13 @@
     </div>
 
     <div class="actions">
-        <a href="#" class="button" id="crearUsuario" data-bs-toggle="modal" data-bs-target="#crearUsuarioModal">CREAR USUARIO</a>
+        <a href="{{ route('usuarios.create') }}" class="button" id="crearUsuario">CREAR USUARIO</a>
         <a href="{{ route('restaurantes.index') }}" class="button" id="verRestaurantes">VER RESTAURANTES</a>
     </div>
 
-    <div class="grid-container" data-url="{{ route('usuarios.index') }}">
+    <div class="grid-container">
         @foreach($usuarios as $usuario)
-        <div class="card user-card" data-id="{{ $usuario->id }}">
+        <div class="card user-card">
             <div class="user-info">
                 <h2>{{ $usuario->username }}</h2>
                 <p><strong>Rol:</strong> {{ $usuario->rol->rol }}</p>

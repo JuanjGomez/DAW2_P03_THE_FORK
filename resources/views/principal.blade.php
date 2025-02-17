@@ -92,5 +92,6 @@
     <div class="pagination">
         {{ $restaurantes->appends(request()->query())->links('pagination::bootstrap-4') }}
     </div>
+    @include('partials.footer')
 </body>
 </html>
