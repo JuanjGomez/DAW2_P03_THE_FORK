@@ -19,7 +19,8 @@ export default defineConfig({
                 'resources/js/app.js',
                 'resources/js/rating.js',
                 'resources/js/createRestaurante.js',
-                'resources/js/restaurantes.js'
+                'resources/js/restaurantes.js',
+                'resources/js/restaurantFilters.js'
             ],
             refresh: true,
         }),

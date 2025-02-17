@@ -19,27 +19,30 @@ class RestauranteController extends Controller
     {
         $query = Restaurante::query();
 
-        // Filtro por nombre
         if ($request->has('nombre') && $request->nombre != '') {
             $query->where('nombre_r', 'like', '%' . $request->nombre . '%');
         }
 
-        // Filtro por tipo de comida
         if ($request->has('tipo_comida') && $request->tipo_comida != '') {
-            $query->where('tipo_comida', 'like', '%' . $request->tipo_comida . '%');
+            $query->whereHas('tipoCocina', function ($q) use ($request) {
+                $q->where('nombre', 'like', '%' . $request->tipo_comida . '%');
+            });
         }
 
-        // Filtro por precio
         if ($request->has('precio') && $request->precio != '') {
             $query->where('precio_promedio', '<=', $request->precio);
         }
 
-        // Filtro por municipio
         if ($request->has('municipio') && $request->municipio != '') {
             $query->where('municipio', $request->municipio);
         }
 
         $restaurantes = $query->paginate(10);
+
+        if ($request->ajax()) {
+            return view('admin.restaurantes.partials.restaurant-grid', compact('restaurantes'))->render();
+        }
+
         $municipios = Restaurante::distinct()->pluck('municipio');
         $tiposCocina = TipoCocina::all();
 
@@ -200,5 +203,32 @@ class RestauranteController extends Controller
             // Manejo del error
             return redirect()->back()->with('error', 'Error al eliminar el restaurante. Por favor, inténtelo más tarde.');
         }
+    }
+
+    public function filterRestaurants(Request $request)
+    {
+        $query = Restaurante::query();
+
+        if ($request->has('nombre') && $request->nombre != '') {
+            $query->where('nombre_r', 'like', '%' . $request->nombre . '%');
+        }
+
+        if ($request->has('tipo_comida') && $request->tipo_comida != '') {
+            $query->whereHas('tipoCocina', function ($q) use ($request) {
+                $q->where('nombre', 'like', '%' . $request->tipo_comida . '%');
+            });
+        }
+
+        if ($request->has('precio') && $request->precio != '') {
+            $query->where('precio_promedio', '<=', $request->precio);
+        }
+
+        if ($request->has('municipio') && $request->municipio != '') {
+            $query->where('municipio', $request->municipio);
+        }
+
+        $restaurantes = $query->paginate(10);
+
+        return view('admin.restaurantes.partials.restaurant-grid', compact('restaurantes'))->render();
     }
 }

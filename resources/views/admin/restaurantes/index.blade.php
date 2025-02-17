@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
     <!-- Styles / Scripts -->
-    @vite(['resources/css/app.css', 'resources/css/custom.css', 'resources/css/crudUnificado.css', 'resources/js/app.js', 'resources/js/restaurantes.js'])
+    @vite(['resources/css/app.css', 'resources/css/custom.css', 'resources/css/crudUnificado.css', 'resources/js/app.js', 'resources/js/restaurantes.js', 'resources/js/restaurantFilters.js'])
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.16.0/dist/sweetalert2.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
@@ -30,7 +30,7 @@
     </header>
 
     <div class="search-bar">
-        <form action="{{ route('restaurantes.index') }}" method="GET">
+        <form id="filters-form" action="{{ route('restaurantes.index') }}" method="GET">
             <input type="text" name="nombre" placeholder="Nombre del restaurante..." value="{{ request('nombre') }}">
             <input type="text" name="tipo_comida" placeholder="Tipo de comida..." value="{{ request('tipo_comida') }}">
             <input type="text" name="precio" placeholder="Precio" value="{{ request('precio') }}">
@@ -50,7 +50,7 @@
         <a href="{{ route('usuarios.index') }}" class="button" id="verUsuarios">VER USUARIOS</a>
     </div>
 
-    <div class="grid-container" data-url="{{ route('restaurantes.index') }}">
+    <div class="grid-container">
         @foreach($restaurantes as $restaurante)
         <div class="card restaurant-card" data-id="{{ $restaurante->id }}">
             <h2>{{ $restaurante->nombre_r }}</h2>
