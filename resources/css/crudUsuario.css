@@ -201,4 +201,81 @@ body {
 .pagination .disabled span {
     color: #ddd;
     cursor: not-allowed;
+}
+
+@media (max-width: 375px) {
+    .header {
+        padding: 10px;
+    }
+
+    .header h1 {
+        display: none;
+    }
+
+    .logo {
+        height: 30px;
+    }
+
+    .user-logo {
+        width: 30px;
+        height: 30px;
+    }
+
+    .search-bar {
+        flex-direction: column;
+        gap: 8px;
+        margin: 10px;
+        padding: 10px;
+    }
+
+    .search-bar form {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .search-bar input,
+    .search-bar select,
+    #buscarUsuario,
+    #limpiarFiltros {
+        width: 100%;
+        padding: 8px;
+        margin: 0;
+        box-sizing: border-box;
+    }
+
+    .actions {
+        flex-direction: row;
+        gap: 10px;
+        margin: 10px;
+    }
+
+    #crearUsuario, 
+    #verRestaurantes {
+        width: 50%;
+        padding: 8px;
+        font-size: 13px;
+    }
+
+    .user-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        padding: 10px;
+    }
+
+    .user-card {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 15px;
+    }
+
+    .user-actions {
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    .user-actions .button {
+        width: 100%;
+        padding: 6px;
+        font-size: 13px;
+    }
 } 

@@ -10,9 +10,34 @@ use Illuminate\Support\Facades\Storage;
 class RestauranteController extends Controller
 {
     // Mostrar lista de restaurantes
-    public function index(){
-        $restaurantes = Restaurante::all();
-        return view('admin.restaurantes.index', compact('restaurantes'));
+    public function index(Request $request)
+    {
+        $query = Restaurante::query();
+
+        // Filtro por nombre
+        if ($request->has('nombre') && $request->nombre != '') {
+            $query->where('nombre_r', 'like', '%' . $request->nombre . '%');
+        }
+
+        // Filtro por tipo de comida
+        if ($request->has('tipo_comida') && $request->tipo_comida != '') {
+            $query->where('tipo_comida', 'like', '%' . $request->tipo_comida . '%');
+        }
+
+        // Filtro por precio
+        if ($request->has('precio') && $request->precio != '') {
+            $query->where('precio_promedio', '<=', $request->precio);
+        }
+
+        // Filtro por municipio
+        if ($request->has('municipio') && $request->municipio != '') {
+            $query->where('municipio', $request->municipio);
+        }
+
+        $restaurantes = $query->paginate(10);
+        $municipios = Restaurante::distinct()->pluck('municipio');
+
+        return view('admin.restaurantes.index', compact('restaurantes', 'municipios'));
     }
 
     // Mostrar formulario de creación

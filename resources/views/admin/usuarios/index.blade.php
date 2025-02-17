@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
     <!-- Styles / Scripts -->
-    @vite(['resources/css/app.css', 'resources/css/custom.css', 'resources/css/crudUsuario.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css', 'resources/css/custom.css', 'resources/css/crudUnificado.css', 'resources/js/app.js'])
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.16.0/dist/sweetalert2.min.css">
 </head>
 <body>
@@ -40,15 +40,15 @@
         <a href="{{ route('restaurantes.index') }}" class="button" id="verRestaurantes">VER RESTAURANTES</a>
     </div>
 
-    <div class="user-grid">
+    <div class="grid-container">
         @foreach($usuarios as $usuario)
-        <div class="user-card">
+        <div class="card user-card">
             <div class="user-info">
                 <h2>{{ $usuario->username }}</h2>
                 <p><strong>Rol:</strong> {{ $usuario->rol->rol }}</p>
                 <p><strong>Email:</strong> {{ $usuario->email }}</p>
             </div>
-            <div class="user-actions">
+            <div class="card-actions">
                 <a href="{{ route('usuarios.edit', $usuario) }}" class="button edit">EDITAR</a>
                 <form action="{{ route('usuarios.destroy', $usuario) }}" method="POST" class="d-inline" id="formEliminar-{{ $usuario->id }}">
                     @csrf
