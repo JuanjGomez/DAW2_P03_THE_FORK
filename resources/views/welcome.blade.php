@@ -29,9 +29,7 @@
                             <input type="text" placeholder="Localidad" class="search-input">
                             <input type="text" placeholder="Nombre del restaurante" class="search-input">
                             <a href="{{ route('login') }}">
-                                <button class="search-button">
-                                    Buscar
-                                </button>
+                                <button type="submit" id="buscarRestaurante" class="search-button">BUSCAR</button>
                             </a>
                         </div>
                     </div>

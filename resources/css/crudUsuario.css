@@ -26,11 +26,21 @@ body {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+.search-bar form {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
 .search-bar input, .search-bar select {
-    padding: 10px;
+    padding: 8px 12px;
     border: 1px solid #ddd;
-    border-radius: 5px;
-    width: 200px;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.search-bar select {
+    min-width: 120px;
 }
 
 #buscarUsuario, #verRestaurantes {
@@ -134,5 +144,138 @@ body {
 @media (max-width: 768px) {
     .user-grid {
         grid-template-columns: 1fr;
+    }
+}
+
+#limpiarFiltros {
+    background-color: #e74c3c;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: opacity 0.3s;
+}
+
+#limpiarFiltros:hover {
+    opacity: 0.8;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+    padding: 10px;
+}
+
+.pagination ul {
+    list-style: none;
+    display: flex;
+    gap: 5px;
+}
+
+.pagination li {
+    display: inline-block;
+}
+
+.pagination a, .pagination span {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    text-decoration: none;
+    color: #34495e;
+    transition: background-color 0.3s;
+}
+
+.pagination a:hover {
+    background-color: #f8f9fa;
+}
+
+.pagination .active span {
+    background-color: #34495e;
+    color: #fff;
+    border-color: #34495e;
+}
+
+.pagination .disabled span {
+    color: #ddd;
+    cursor: not-allowed;
+}
+
+@media (max-width: 375px) {
+    .header {
+        padding: 10px;
+    }
+
+    .header h1 {
+        display: none;
+    }
+
+    .logo {
+        height: 30px;
+    }
+
+    .user-logo {
+        width: 30px;
+        height: 30px;
+    }
+
+    .search-bar {
+        flex-direction: column;
+        gap: 8px;
+        margin: 10px;
+        padding: 10px;
+    }
+
+    .search-bar form {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .search-bar input,
+    .search-bar select,
+    #buscarUsuario,
+    #limpiarFiltros {
+        width: 100%;
+        padding: 8px;
+        margin: 0;
+        box-sizing: border-box;
+    }
+
+    .actions {
+        flex-direction: row;
+        gap: 10px;
+        margin: 10px;
+    }
+
+    #crearUsuario, 
+    #verRestaurantes {
+        width: 50%;
+        padding: 8px;
+        font-size: 13px;
+    }
+
+    .user-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        padding: 10px;
+    }
+
+    .user-card {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 15px;
+    }
+
+    .user-actions {
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    .user-actions .button {
+        width: 100%;
+        padding: 6px;
+        font-size: 13px;
     }
 } 

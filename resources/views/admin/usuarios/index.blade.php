@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
     <!-- Styles / Scripts -->
-    @vite(['resources/css/app.css', 'resources/css/custom.css', 'resources/css/crudUsuario.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css', 'resources/css/custom.css', 'resources/css/crudUnificado.css', 'resources/js/app.js'])
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.16.0/dist/sweetalert2.min.css">
 </head>
 <body>
@@ -17,19 +17,29 @@
         <h1>Administración de Usuarios</h1>
         <div class="user-menu">
             <img src="{{ asset('images/user.png') }}" alt="Foto de usuario" class="user-logo">
+            <div class="dropdown-menu">
+                <a href="{{ route('perfil') }}" class="dropdown-item">Perfil</a>
+                <form method="POST" action="{{ route('logout') }}" class="dropdown-item">
+                    @csrf
+                    <button type="submit" class="logout-button">Cerrar sesión</button>
+                </form>
+            </div>
         </div>
     </header>
 
     <div class="search-bar">
-        <input type="text" placeholder="Nombre de usuario...">
-        <input type="text" placeholder="Email...">
-        <select>
-            <option value="">Rol</option>
-            @foreach($roles as $rol)
-                <option value="{{ $rol->id }}">{{ $rol->rol }}</option>
-            @endforeach
-        </select>
-        <button id="buscarUsuario">BUSCAR</button>
+        <form action="{{ route('usuarios.index') }}" method="GET">
+            <input type="text" name="username" placeholder="Nombre de usuario..." value="{{ request('username') }}">
+            <input type="text" name="email" placeholder="Email..." value="{{ request('email') }}">
+            <select name="rol_id">
+                <option value="">Rol</option>
+                @foreach($roles as $rol)
+                    <option value="{{ $rol->id }}" {{ request('rol_id') == $rol->id ? 'selected' : '' }}>{{ $rol->rol }}</option>
+                @endforeach
+            </select>
+            <button type="submit" id="buscarUsuario">BUSCAR</button>
+            <a href="{{ route('usuarios.index') }}" class="button" id="limpiarFiltros">LIMPIAR FILTROS</a>
+        </form>
     </div>
 
     <div class="actions">
@@ -37,24 +47,29 @@
         <a href="{{ route('restaurantes.index') }}" class="button" id="verRestaurantes">VER RESTAURANTES</a>
     </div>
 
-    <div class="user-grid">
+    <div class="grid-container">
         @foreach($usuarios as $usuario)
-        <div class="user-card">
+        <div class="card user-card">
             <div class="user-info">
                 <h2>{{ $usuario->username }}</h2>
                 <p><strong>Rol:</strong> {{ $usuario->rol->rol }}</p>
                 <p><strong>Email:</strong> {{ $usuario->email }}</p>
             </div>
-            <div class="user-actions">
+            <div class="card-actions">
                 <a href="{{ route('usuarios.edit', $usuario) }}" class="button edit">EDITAR</a>
-                <form action="{{ route('usuarios.destroy', $usuario) }}" method="POST" class="d-inline">
+                <form action="{{ route('usuarios.destroy', $usuario) }}" method="POST" class="d-inline" id="formEliminar-{{ $usuario->id }}">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="button delete" onclick="return confirm('¿Estás seguro?')">ELIMINAR</button>
+                    <button type="button" class="button delete" onclick="confirmarEliminacion('{{ $usuario->id }}')">ELIMINAR</button>
                 </form>
             </div>
         </div>
         @endforeach
+    </div>
+
+    <!-- Paginación -->
+    <div class="pagination">
+        {{ $usuarios->appends(request()->query())->links('pagination::bootstrap-4') }}
     </div>
 
     <!-- SweetAlerts -->
