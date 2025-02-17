@@ -229,6 +229,15 @@
     </div>
     @endforeach
 </div>
+@if(session('success'))
+    <script>
+        Swal.fire({
+            title: '¡Éxito!',
+            text: "{{ session('success') }}",
+            icon: 'success'
+        });
+    </script>
+@endif
 @include('partials.footer')
 </body>
 </html>

@@ -110,11 +110,8 @@ class RestauranteController extends Controller
             ]);
 
             DB::commit();
-            return response()->json([
-                'success' => true,
-                'message' => 'Restaurante creado con éxito',
-                'data' => $restaurante
-            ]);
+            session()->flash('success', 'Restaurante actualizado con éxito');
+            return redirect()->route('restaurantes.index');
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
@@ -204,11 +201,8 @@ class RestauranteController extends Controller
             }
 
             DB::commit();
-            return response()->json([
-                'success' => true,
-                'message' => 'Restaurante actualizado con éxito',
-                'data' => $restaurante
-            ]);
+            session()->flash('success', 'Restaurante actualizado con éxito');
+            return redirect()->route('restaurantes.index');
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
