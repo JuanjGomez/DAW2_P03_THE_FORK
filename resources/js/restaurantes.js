@@ -23,8 +23,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Limpiar el formulario
                     crearForm.reset();
 
-                    // Actualizar la lista de restaurantes (opcional)
-                    actualizarListaRestaurantes();
+                    // Agregar el nuevo restaurante dinámicamente
+                    agregarRestauranteALista(data.data);
                 } else {
                     console.error('Error:', data.message);
                 }
@@ -71,14 +71,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Función para actualizar la lista de restaurantes
     function actualizarListaRestaurantes() {
-        fetch("{{ route('restaurantes.index') }}", {
+        const gridContainer = document.querySelector('.grid-container');
+        const url = gridContainer.getAttribute('data-url');
+
+        fetch(url, {
             headers: {
                 'X-Requested-With': 'XMLHttpRequest'
             }
         })
         .then(response => response.text())
         .then(html => {
-            document.querySelector('.grid-container').innerHTML = html;
+            gridContainer.innerHTML = html;
         })
         .catch(error => {
             console.error('Error al actualizar la lista:', error);
@@ -92,5 +95,46 @@ document.addEventListener('DOMContentLoaded', function() {
             card.querySelector('h2').textContent = restaurante.nombre_r;
             card.querySelector('img').src = `{{ asset('images/restaurantes') }}/${restaurante.imagen}`;
         }
+    }
+
+    // Función para agregar un restaurante a la lista
+    function agregarRestauranteALista(restaurante) {
+        const gridContainer = document.querySelector('.grid-container');
+
+        // Crear la tarjeta del restaurante
+        const card = document.createElement('div');
+        card.className = 'card restaurant-card';
+        card.setAttribute('data-id', restaurante.id);
+
+        card.innerHTML = `
+            <h2>${restaurante.nombre_r}</h2>
+            <img src="{{ asset('images/restaurantes') }}/${restaurante.imagen}" alt="${restaurante.nombre_r}">
+            <div class="card-actions">
+                <a href="#" class="button edit" data-bs-toggle="modal" data-bs-target="#editarRestauranteModal-${restaurante.id}">EDITAR</a>
+                <form id="formEliminar-${restaurante.id}" method="POST" action="{{ route('restaurantes.destroy', '${restaurante.id}') }}">
+                    <button type="button" class="button delete" onclick="confirmarEliminacion('${restaurante.id}')">ELIMINAR</button>
+                </form>
+            </div>
+        `;
+
+        // Agregar el CSRF token y el método DELETE dinámicamente
+        const form = card.querySelector(`#formEliminar-${restaurante.id}`);
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+
+        const csrfInput = document.createElement('input');
+        csrfInput.type = 'hidden';
+        csrfInput.name = '_token';
+        csrfInput.value = csrfToken;
+
+        const methodInput = document.createElement('input');
+        methodInput.type = 'hidden';
+        methodInput.name = '_method';
+        methodInput.value = 'DELETE';
+
+        form.appendChild(csrfInput);
+        form.appendChild(methodInput);
+
+        // Agregar la tarjeta al contenedor
+        gridContainer.prepend(card);
     }
 }); 

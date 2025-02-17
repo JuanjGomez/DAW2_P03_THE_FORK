@@ -50,7 +50,7 @@
         <a href="{{ route('usuarios.index') }}" class="button" id="verUsuarios">VER USUARIOS</a>
     </div>
 
-    <div class="grid-container">
+    <div class="grid-container" data-url="{{ route('restaurantes.index') }}">
         @foreach($restaurantes as $restaurante)
         <div class="card restaurant-card" data-id="{{ $restaurante->id }}">
             <h2>{{ $restaurante->nombre_r }}</h2>
@@ -79,6 +79,7 @@
     @endif
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.16.0/dist/sweetalert2.all.min.js"></script>
     <script src="{{asset('js/restaurantes.js')}}"></script>
+    <script src="{{ asset('js/adminRestaurantes.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- Modal Crear Restaurante -->
