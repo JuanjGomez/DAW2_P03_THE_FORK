@@ -131,6 +131,16 @@
                             <label for="imagen">IMAGEN</label>
                             <input type="file" id="imagen" name="imagen" class="form-control" accept="image/*" required>
                         </div>
+
+                        <div class="form-group mb-3">
+                            <label for="manager_id">GERENTE</label>
+                            <select id="manager_id" name="manager_id" class="form-control">
+                                <option value="">Seleccionar gerente</option>
+                                @foreach($managersDisponibles as $manager)
+                                    <option value="{{ $manager->id }}">{{ $manager->username }}</option>
+                                @endforeach
+                            </select>
+                        </div>
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -194,6 +204,19 @@
                             <label for="imagen">IMAGEN</label>
                             <input type="file" id="imagen" name="imagen" class="form-control" accept="image/*">
                             <small class="form-text text-muted">Deja en blanco para mantener la imagen actual</small>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="manager_id_{{ $restaurante->id }}">GERENTE</label>
+                            <select id="manager_id_{{ $restaurante->id }}" name="manager_id" class="form-control">
+                                <option value="">Seleccionar gerente</option>
+                                @foreach($managersEdicion as $manager)
+                                    <option value="{{ $manager->id }}" 
+                                        {{ $restaurante->manager_id == $manager->id ? 'selected' : '' }}>
+                                        {{ $manager->username }}
+                                    </option>
+                                @endforeach
+                            </select>
                         </div>
                     </form>
                 </div>
