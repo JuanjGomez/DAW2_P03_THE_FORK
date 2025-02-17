@@ -50,10 +50,10 @@
             </div>
             <div class="user-actions">
                 <a href="{{ route('usuarios.edit', $usuario) }}" class="button edit">EDITAR</a>
-                <form action="{{ route('usuarios.destroy', $usuario) }}" method="POST" class="d-inline">
+                <form action="{{ route('usuarios.destroy', $usuario) }}" method="POST" class="d-inline" id="formEliminar-{{ $usuario->id }}">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="button delete" onclick="return confirm('¿Estás seguro?')">ELIMINAR</button>
+                    <button type="button" class="button delete" onclick="confirmarEliminacion('{{ $usuario->id }}')">ELIMINAR</button>
                 </form>
             </div>
         </div>
