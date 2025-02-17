@@ -55,7 +55,7 @@
             <h2>{{ $restaurante->nombre_r }}</h2>
             <img src="{{ asset('images/restaurantes/' . $restaurante->imagen) }}" alt="{{ $restaurante->nombre_r }}">
             <div class="card-actions">
-                <a href="{{ route('restaurantes.edit', $restaurante->id) }}" class="button edit">EDITAR</a>
+                <a href="#" class="button edit" data-bs-toggle="modal" data-bs-target="#editarRestauranteModal-{{ $restaurante->id }}">EDITAR</a>
                 <form id="formEliminar-{{ $restaurante->id }}" method="POST" action="{{ route('restaurantes.destroy', $restaurante->id) }}">
                     @csrf
                     @method('DELETE')
@@ -138,6 +138,71 @@
             </div>
         </div>
     </div>
+
+    @foreach($restaurantes as $restaurante)
+    <!-- Modal Editar Restaurante -->
+    <div class="modal fade" id="editarRestauranteModal-{{ $restaurante->id }}" tabindex="-1" aria-labelledby="editarRestauranteModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editarRestauranteModalLabel">Editar Restaurante: {{ $restaurante->nombre_r }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="{{ route('restaurantes.update', $restaurante->id) }}" enctype="multipart/form-data" id="editarRestauranteForm-{{ $restaurante->id }}">
+                        @csrf
+                        @method('PUT')
+                        <div class="form-group mb-3">
+                            <label for="nombre_r">NOMBRE</label>
+                            <input type="text" id="nombre_r" name="nombre_r" class="form-control" value="{{ $restaurante->nombre_r }}" required>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="direccion">DIRECCIÓN</label>
+                            <input type="text" id="direccion" name="direccion" class="form-control" value="{{ $restaurante->direccion }}">
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="municipio">MUNICIPIO</label>
+                            <input type="text" id="municipio" name="municipio" class="form-control" value="{{ $restaurante->municipio }}">
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="tipo_cocina_id">TIPO DE COMIDA</label>
+                            <select id="tipo_cocina_id" name="tipo_cocina_id" class="form-select" required>
+                                @foreach($tiposCocina as $tipo)
+                                    <option value="{{ $tipo->id }}" {{ $restaurante->tipo_cocina_id == $tipo->id ? 'selected' : '' }}>
+                                        {{ $tipo->nombre }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="precio_promedio">PRECIO MEDIO POR PERSONA</label>
+                            <input type="number" id="precio_promedio" name="precio_promedio" class="form-control" value="{{ $restaurante->precio_promedio }}" step="0.01" required>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="descripcion">DESCRIPCIÓN</label>
+                            <textarea id="descripcion" name="descripcion" class="form-control">{{ $restaurante->descripcion }}</textarea>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="imagen">IMAGEN</label>
+                            <input type="file" id="imagen" name="imagen" class="form-control" accept="image/*">
+                            <small class="form-text text-muted">Deja en blanco para mantener la imagen actual</small>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" form="editarRestauranteForm-{{ $restaurante->id }}" class="btn btn-primary">Guardar Cambios</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endforeach
 </body>
 </html>
 
