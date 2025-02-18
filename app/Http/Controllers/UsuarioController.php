@@ -32,6 +32,10 @@ class UsuarioController extends Controller
         $usuarios = $query->paginate(10);
         $roles = Rol::all();
 
+        if ($request->ajax()) {
+            return view('admin.usuarios._usuarios_list', compact('usuarios'));
+        }
+
         return view('admin.usuarios.index', compact('usuarios', 'roles'));
     }
 
@@ -134,23 +138,18 @@ class UsuarioController extends Controller
     {
         DB::beginTransaction();
         try {
-            // Si el usuario es gerente, actualizar el restaurante
-            if ($usuario->rol_id == 2) {
-                Restaurante::where('manager_id', $usuario->id)
-                    ->update(['manager_id' => null]);
-            }
+            // Actualizar los restaurantes que tienen este usuario como manager
+            Restaurante::where('manager_id', $usuario->id)
+                ->update(['manager_id' => null]);
 
-            // Eliminar las valoraciones del usuario
-            Rating::where('user_id', $usuario->id)->delete();
-
-            // Eliminar el usuario
+            // Ahora puedes eliminar el usuario
             $usuario->delete();
 
             DB::commit();
+
             return response()->json([
                 'success' => true,
-                'message' => 'Usuario eliminado con éxito',
-                'data' => ['id' => $usuario->id]
+                'message' => 'Usuario eliminado correctamente'
             ]);
         } catch (\Exception $e) {
             DB::rollBack();

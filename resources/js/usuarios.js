@@ -7,18 +7,27 @@ document.addEventListener('DOMContentLoaded', function() {
         crearForm.addEventListener('submit', function(e) {
             e.preventDefault();
             const formData = new FormData(this);
+            const modal = document.getElementById('crearUsuarioModal');
 
             fetch(this.action, {
                 method: 'POST',
-                body: formData,
                 headers: {
                     'X-CSRF-TOKEN': csrfToken
-                }
+                },
+                body: formData
             })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    window.location.href = '/usuarios';
+                    // Cerrar el modal
+                    const bootstrapModal = bootstrap.Modal.getInstance(modal);
+                    bootstrapModal.hide();
+
+                    // Limpiar el formulario
+                    this.reset();
+
+                    // Añadir la nueva tarjeta de usuario
+                    agregarUsuarioALista(data.data);
                 }
             })
             .catch(error => console.error('Error:', error));
@@ -111,35 +120,28 @@ document.addEventListener('DOMContentLoaded', function() {
         form.addEventListener('submit', function(e) {
             e.preventDefault();
             const formData = new FormData(this);
+            const modal = document.querySelector(`#editarUsuarioModal-${userId}`);
 
             fetch(this.action, {
                 method: 'POST',
-                body: formData,
                 headers: {
                     'X-CSRF-TOKEN': csrfToken,
                     'X-HTTP-Method-Override': 'PUT'
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Cerrar el modal
+                    const bootstrapModal = bootstrap.Modal.getInstance(modal);
+                    bootstrapModal.hide();
+
+                    // Actualizar la tarjeta del usuario
+                    actualizarTarjetaUsuario(data.data);
                 }
             })
-            .then(response => response.text())
-            .then(html => {
-                // Reemplazar el contenido de la página con la nueva vista
-                document.documentElement.innerHTML = html;
-
-                // Mostrar mensaje de éxito
-                Swal.fire({
-                    icon: 'success',
-                    title: '¡Éxito!',
-                    text: 'Usuario actualizado correctamente'
-                });
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Ocurrió un error inesperado'
-                });
-            });
+            .catch(error => console.error('Error:', error));
         });
     });
 
@@ -229,5 +231,71 @@ document.addEventListener('DOMContentLoaded', function() {
     function validateEmail(email) {
         const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return re.test(email);
+    }
+
+    const buscarBtn = document.getElementById('buscarUsuarioAjax');
+    const limpiarBtn = document.getElementById('limpiarFiltrosUsuarios');
+    
+    if (buscarBtn) {
+        buscarBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            aplicarFiltrosUsuarios();
+        });
+    }
+    
+    if (limpiarBtn) {
+        limpiarBtn.addEventListener('click', limpiarFiltrosUsuarios);
+    }
+
+    function aplicarFiltrosUsuarios() {
+        const form = document.getElementById('filtroFormUsuarios');
+        const url = form.getAttribute('action');
+        const params = new URLSearchParams(new FormData(form));
+        
+        fetch(`${url}?${params.toString()}`, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'text/html'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.text();
+        })
+        .then(html => {
+            document.getElementById('resultadosUsuarios').innerHTML = html;
+            updatePaginationLinksUsuarios();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Hubo un error al realizar la búsqueda');
+        });
+    }
+
+    function limpiarFiltrosUsuarios(e) {
+        e.preventDefault();
+        window.location.href = e.target.href;
+    }
+
+    function updatePaginationLinksUsuarios() {
+        document.querySelectorAll('.pagination a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                fetch(this.href, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'text/html'
+                    }
+                })
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('resultadosUsuarios').innerHTML = html;
+                    updatePaginationLinksUsuarios();
+                })
+                .catch(error => console.error('Error:', error));
+            });
+        });
     }
 });

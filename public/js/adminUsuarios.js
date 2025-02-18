@@ -132,9 +132,11 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // Cerrar el modal
-                    const bootstrapModal = bootstrap.Modal.getInstance(modal);
-                    bootstrapModal.hide();
+                    // Cerrar el modal correctamente
+                    const modalInstance = bootstrap.Modal.getInstance(modal);
+                    if (modalInstance) {
+                        modalInstance.hide();
+                    }
 
                     // Limpiar el formulario
                     this.reset();
@@ -142,23 +144,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Añadir la nueva tarjeta de usuario
                     agregarUsuarioALista(data.data);
 
-                    // Mostrar mensaje de éxito
-                    Swal.fire({
-                        icon: 'success',
-                        title: '¡Éxito!',
-                        text: data.message
-                    });
+                    // Recargar la página para actualizar la lista completa
+                    window.location.reload();
                 } else {
                     throw new Error(data.message);
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: error.message || 'Ocurrió un error al crear el usuario'
-                });
             });
         });
     }
