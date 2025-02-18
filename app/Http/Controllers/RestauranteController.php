@@ -60,8 +60,15 @@ class RestauranteController extends Controller
             })
             ->get();
         
-        // Para edición, obtener todos los gerentes
-        $managersEdicion = Usuario::where('rol_id', 2)->get();
+        // Para edición, obtener solo gerentes disponibles o el actual del restaurante
+        $managersEdicion = Usuario::where('rol_id', 2)
+            ->where(function($query) {
+                $query->whereDoesntHave('restaurante')
+                      ->orWhereHas('restaurante', function($q) {
+                          $q->whereNull('manager_id');
+                      });
+            })
+            ->get();
 
         return view('admin.restaurantes.index', compact('restaurantes', 'municipios', 'tiposCocina', 'managersDisponibles', 'managersEdicion'));
     }
