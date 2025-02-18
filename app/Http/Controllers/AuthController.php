@@ -145,13 +145,26 @@ class AuthController extends Controller
 
         if ($request->has('valoracion_min') && $request->valoracion_min != '') {
             $query->whereHas('ratings', function($q) use ($request) {
-                $q->select('restaurante_id');
-                $q->groupBy('restaurante_id');
-                $q->havingRaw('AVG(rating) >= ?', [$request->valoracion_min]);
+                $q->select('restaurante_id')
+                  ->groupBy('restaurante_id')
+                  ->havingRaw('AVG(rating) >= ?', [$request->valoracion_min]);
             });
         }
 
-        $restaurantes = $query->orderBy('precio_promedio', 'desc')->paginate(10);
+        // Aplicar ordenación
+        if ($request->has('sort') && $request->has('order')) {
+            if ($request->sort === 'rating') {
+                $query->withAvg('ratings', 'rating')
+                      ->orderBy('ratings_avg_rating', $request->order);
+            } else {
+                $query->orderBy($request->sort, $request->order);
+            }
+        } else {
+            // Ordenación por defecto
+            $query->orderBy('precio_promedio', 'desc');
+        }
+
+        $restaurantes = $query->paginate(10);
         $municipios = \App\Models\Restaurante::distinct()->pluck('municipio');
 
         return view('principal', [

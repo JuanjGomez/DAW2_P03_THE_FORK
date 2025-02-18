@@ -64,10 +64,18 @@
     <div class="sorting-container">
         <select class="sort-select filter-input" onchange="sortRestaurants(this)">
             <option value="">Ordenar por</option>
-            <option value="precio_promedio-desc">Precio (Mayor a menor)</option>
-            <option value="precio_promedio-asc">Precio (Menor a mayor)</option>
-            <option value="rating-desc">Valoración (Mayor a menor)</option>
-            <option value="rating-asc">Valoración (Menor a mayor)</option>
+            <option value="precio_promedio-desc" {{ request('sort') == 'precio_promedio' && request('order') == 'desc' ? 'selected' : '' }}>
+                Precio (Mayor a menor)
+            </option>
+            <option value="precio_promedio-asc" {{ request('sort') == 'precio_promedio' && request('order') == 'asc' ? 'selected' : '' }}>
+                Precio (Menor a mayor)
+            </option>
+            <option value="rating-desc" {{ request('sort') == 'rating' && request('order') == 'desc' ? 'selected' : '' }}>
+                Valoración (Mayor a menor)
+            </option>
+            <option value="rating-asc" {{ request('sort') == 'rating' && request('order') == 'asc' ? 'selected' : '' }}>
+                Valoración (Menor a mayor)
+            </option>
         </select>
     </div>
 
