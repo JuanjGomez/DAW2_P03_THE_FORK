@@ -83,16 +83,19 @@
                         <div class="form-group mb-3">
                             <label for="nombre_r">NOMBRE</label>
                             <input type="text" id="nombre_r" name="nombre_r" class="form-control" required>
+                            <span class="error-message" id="errorNombre"></span>
                         </div>
 
                         <div class="form-group mb-3">
                             <label for="direccion">DIRECCIÓN</label>
                             <input type="text" id="direccion" name="direccion" class="form-control">
+                            <span class="error-message" id="errorDireccion"></span>
                         </div>
 
                         <div class="form-group mb-3">
                             <label for="municipio">MUNICIPIO</label>
-                            <input type="text" id="municipio" name="municipio" class="form-control">
+                            <input type="text" id="municipioR" name="municipio" class="form-control">
+                            <span class="error-message" id="errorMunicipio"></span>
                         </div>
 
                         <div class="form-group mb-3">
@@ -102,21 +105,25 @@
                                     <option value="{{ $tipo->id }}">{{ $tipo->nombre }}</option>
                                 @endforeach
                             </select>
+                            <span class="error-message" id="errorTipoCocina"></span>
                         </div>
 
                         <div class="form-group mb-3">
                             <label for="precio_promedio">PRECIO MEDIO POR PERSONA</label>
-                            <input type="number" id="precio_promedio" name="precio_promedio" class="form-control" step="0.01" required>
+                            <input type="number" id="precio_promedioR" name="precio_promedio" class="form-control" step="0.01" required>
+                            <span class="error-message" id="errorPrecioPromedio"></span>
                         </div>
 
                         <div class="form-group mb-3">
                             <label for="descripcion">DESCRIPCIÓN</label>
-                            <textarea id="descripcion" name="descripcion" class="form-control"></textarea>
+                            <textarea id="descripcionR" name="descripcion" class="form-control"></textarea>
+                            <span class="error-message" id="errorDescripcion"></span>
                         </div>
 
                         <div class="form-group mb-3">
                             <label for="imagen">IMAGEN</label>
-                            <input type="file" id="imagen" name="imagen" class="form-control" accept="image/*" required>
+                            <input type="file" id="imagenR" name="imagen" class="form-control" accept="image/*" required>
+                            <span class="error-message" id="errorImagen"></span>
                         </div>
 
                         <div class="form-group mb-3">
@@ -127,13 +134,14 @@
                                     <option value="{{ $manager->id }}">{{ $manager->username }}</option>
                                 @endforeach
                             </select>
+                            <span class="error-message" id="errorManager"></span>
                         </div>
 
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="submit" form="crearRestauranteForm" class="btn btn-primary">Guardar</button>
+                    <button type="submit" form="crearRestauranteForm" class="btn btn-primary" id="btnCrearRestaurante" disabled>Guardar</button>
                 </div>
             </div>
         </div>
@@ -199,14 +207,14 @@
                             <select id="manager_id_{{ $restaurante->id }}" name="manager_id" class="form-control">
                                 <option value="">Seleccionar gerente</option>
                                 @foreach($managersEdicion as $manager)
-                                    <option value="{{ $manager->id }}" 
+                                    <option value="{{ $manager->id }}"
                                         {{ $restaurante->manager_id == $manager->id ? 'selected' : '' }}>
                                         {{ $manager->username }}
                                     </option>
                                 @endforeach
                             </select>
                         </div>
-                        
+
                     </form>
                 </div>
                 <div class="modal-footer">

@@ -95,8 +95,148 @@ document.addEventListener('DOMContentLoaded', function() {
         verificarForm();
     }
 
-    function verificarForm() {
+    document.getElementById('direccion').oninput = function() {
+        let direccion = this.value.trim();
+        let errorDireccion = "";
 
+        if (direccion.length === 0 || /^\s+$/.test(direccion) || direccion == null) {
+            errorDireccion = "La dirección es obligatoria.";
+            this.style.border = "2px solid red";
+        } else if(direccion.length < 3 || direccion.length > 100) {
+            errorDireccion = "La dirección debe tener al menos 3 caracteres.";
+            this.style.border = "2px solid red";
+        } else {
+            this.style.border = "2px solid green";
+            errorDireccion = "";
+        }
+
+        document.getElementById('errorDireccion').textContent = errorDireccion;
+        verificarForm();
+    }
+
+    document.getElementById('municipioR').oninput = function() {
+        let municipio = this.value.trim();
+        let errorMunicipio = "";
+
+        if (municipio.length === 0 || /^\s+$/.test(municipio) || municipio == null) {
+            errorMunicipio = "El municipio es obligatorio.";
+            this.style.border = "2px solid red";
+        } else if(municipio.length < 3 || municipio.length > 50) {
+            errorMunicipio = "El municipio debe tener al menos 3 caracteres.";
+            this.style.border = "2px solid red";
+        } else {
+            this.style.border = "2px solid green";
+            errorMunicipio = "";
+        }
+
+        document.getElementById('errorMunicipio').textContent = errorMunicipio;
+        verificarForm();
+    }
+
+    document.getElementById('tipo_cocina_id').oninput = function() {
+        let tipoCocina = this.value;
+        let errorTipoCocina = "";
+
+        if (tipoCocina.length === 0 || /^\s+$/.test(tipoCocina) || tipoCocina == null) {
+            errorTipoCocina = "El tipo de cocina es obligatorio.";
+            this.style.border = "2px solid red";
+        } else {
+            this.style.border = "2px solid green";
+            errorTipoCocina = "";
+        }
+
+        document.getElementById('errorTipoCocina').textContent = errorTipoCocina;
+        verificarForm();
+    }
+
+    document.getElementById('precio_promedioR').oninput = function() {
+        let precioPromedio = this.value.trim();
+        let errorPrecioPromedio = "";
+
+        if (precioPromedio.length === 0 || /^\s+$/.test(precioPromedio) || precioPromedio == null) {
+            errorPrecioPromedio = "El precio promedio es obligatorio.";
+            this.style.border = "2px solid red";
+        } else if(precioPromedio < 0) {
+            errorPrecioPromedio = "El precio promedio no puede ser negativo.";
+            this.style.border = "2px solid red";
+        } else {
+            this.style.border = "2px solid green";
+            errorPrecioPromedio = "";
+        }
+
+        document.getElementById('errorPrecioPromedio').textContent = errorPrecioPromedio;
+        verificarForm();
+    }
+
+    document.getElementById('descripcionR').oninput = function() {
+        let descripcion = this.value.trim();
+        let errorDescripcion = "";
+
+        if (descripcion.length === 0 || /^\s+$/.test(descripcion) || descripcion == null) {
+            errorDescripcion = "La descripción es obligatoria.";
+            this.style.border = "2px solid red";
+        } else {
+            this.style.border = "2px solid green";
+            errorDescripcion = "";
+        }
+
+        document.getElementById('errorDescripcion').textContent = errorDescripcion;
+        verificarForm();
+    }
+
+    document.getElementById('imagenR').onchange = function() {
+        let imagen = this.value.trim();
+        let errorImagen = "";
+
+        if (imagen.length === 0 || /^\s+$/.test(imagen) || imagen == null) {
+            errorImagen = "La imagen es obligatoria.";
+            this.style.border = "2px solid red";
+        } else {
+            this.style.border = "2px solid green";
+        }
+    }
+
+    document.getElementById('manager_id').oninput = function() {
+        let manager = this.value;
+        let errorManager = "";
+
+        if (manager.length === 0 || /^\s+$/.test(manager) || manager == null) {
+            errorManager = "El gerente es obligatorio.";
+            this.style.border = "2px solid red";
+        } else {
+            this.style.border = "2px solid green";
+            errorManager = "";
+        }
+
+        document.getElementById('errorManager').textContent = errorManager;
+        verificarForm();
+    }
+    function verificarForm() {
+        let errores = [
+            document.getElementById('errorNombre').textContent,
+            document.getElementById('errorDireccion').textContent,
+            document.getElementById('errorMunicipio').textContent,
+            document.getElementById('errorTipoCocina').textContent,
+            document.getElementById('errorPrecioPromedio').textContent,
+            document.getElementById('errorDescripcion').textContent,
+            document.getElementById('errorImagen').textContent,
+            document.getElementById('errorManager').textContent
+        ];
+        let campos = [
+            document.getElementById('nombre_r').value.trim(),
+            document.getElementById('direccion').value.trim(),
+            document.getElementById('municipioR').value.trim(),
+            document.getElementById('tipo_cocina_id').value.trim(),
+            document.getElementById('precio_promedioR').value.trim(),
+            document.getElementById('descripcionR').value.trim(),
+            document.getElementById('imagenR').value.trim(),
+            document.getElementById('manager_id').value.trim()
+        ];
+
+        const hayErrores = errores.some(error => error !== "");
+        const camposVacios = campos.some(campo => campo === "");
+
+        document.getElementById('btnCrearRestaurante').disabled = hayErrores || camposVacios;
     }
 
     if (crearForm) {
