@@ -18,59 +18,19 @@ class RestauranteController extends Controller
     // Mostrar lista de restaurantes
     public function index(Request $request)
     {
-        $query = Restaurante::query();
-
-        if ($request->has('nombre') && $request->nombre != '') {
-            $query->where('nombre_r', 'like', '%' . $request->nombre . '%');
-        }
-
-        if ($request->has('tipo_comida') && $request->tipo_comida != '') {
-            $query->whereHas('tipoCocina', function ($q) use ($request) {
-                $q->where('nombre', 'like', '%' . $request->tipo_comida . '%');
-            });
-        }
-
-        if ($request->has('precio') && $request->precio != '') {
-            $query->where('precio_promedio', '<=', $request->precio);
-        }
-
-        if ($request->has('municipio') && $request->municipio != '') {
-            $query->where('municipio', $request->municipio);
-        }
-
-        if ($request->has('tipo_cocina') && $request->tipo_cocina != '') {
-            $query->where('tipo_cocina_id', $request->tipo_cocina);
-        }
-
-        $restaurantes = $query->paginate(10);
-
+        $restaurantes = $this->applyFilters($request);
+        
         if ($request->ajax()) {
-            return view('admin.restaurantes.partials.restaurant-grid', compact('restaurantes'))->render();
+            return view('admin.restaurantes._restaurantes_list', compact('restaurantes'));
         }
-
-        $municipios = Restaurante::distinct()->pluck('municipio');
-        $tiposCocina = TipoCocina::all();
         
-        // Obtener todos los usuarios con rol de gerente (rol_id = 2)
-        $managersDisponibles = Usuario::where('rol_id', 2)
-            ->whereNotIn('id', function($query) {
-                $query->select('manager_id')
-                      ->from('restaurantes')
-                      ->whereNotNull('manager_id');
-            })
-            ->get();
-        
-        // Para edición, obtener solo gerentes disponibles o el actual del restaurante
-        $managersEdicion = Usuario::where('rol_id', 2)
-            ->where(function($query) {
-                $query->whereDoesntHave('restaurante')
-                      ->orWhereHas('restaurante', function($q) {
-                          $q->whereNull('manager_id');
-                      });
-            })
-            ->get();
-
-        return view('admin.restaurantes.index', compact('restaurantes', 'municipios', 'tiposCocina', 'managersDisponibles', 'managersEdicion'));
+        return view('admin.restaurantes.index', [
+            'restaurantes' => $restaurantes,
+            'municipios' => $this->getMunicipios(),
+            'tiposCocina' => $this->getTiposCocina(),
+            'managersDisponibles' => $this->getManagersDisponibles(),
+            'managersEdicion' => $this->getManagersEdicion()
+        ]);
     }
 
     // Mostrar formulario de creación
@@ -257,5 +217,50 @@ class RestauranteController extends Controller
         $restaurantes = $query->paginate(10);
 
         return view('admin.restaurantes.partials.restaurant-grid', compact('restaurantes'))->render();
+    }
+
+    protected function applyFilters(Request $request)
+    {
+        $query = Restaurante::query();
+
+        if ($request->has('nombre') && $request->nombre != '') {
+            $query->where('nombre_r', 'like', '%' . $request->nombre . '%');
+        }
+
+        if ($request->has('tipo_comida') && $request->tipo_comida != '') {
+            $query->whereHas('tipoCocina', function ($q) use ($request) {
+                $q->where('nombre', 'like', '%' . $request->tipo_comida . '%');
+            });
+        }
+
+        if ($request->has('precio') && $request->precio != '') {
+            $query->where('precio_promedio', '<=', $request->precio);
+        }
+
+        if ($request->has('municipio') && $request->municipio != '') {
+            $query->where('municipio', $request->municipio);
+        }
+
+        return $query->paginate(10);
+    }
+
+    protected function getMunicipios()
+    {
+        return Restaurante::distinct()->pluck('municipio');
+    }
+
+    protected function getTiposCocina()
+    {
+        return TipoCocina::all();
+    }
+
+    protected function getManagersDisponibles()
+    {
+        return Usuario::where('rol_id', 2)->doesntHave('restaurante')->get();
+    }
+
+    protected function getManagersEdicion()
+    {
+        return Usuario::where('rol_id', 2)->get();
     }
 }
