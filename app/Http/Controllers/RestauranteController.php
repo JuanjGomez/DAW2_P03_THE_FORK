@@ -44,8 +44,6 @@ class RestauranteController extends Controller
     // Guardar nuevo restaurante
     public function store(Request $request)
     {
-        DB::beginTransaction();
-        try {
             $request->validate([
                 'nombre_r' => 'required|string|max:75|unique:restaurantes',
                 'descripcion' => 'nullable|string|max:255',
@@ -85,13 +83,6 @@ class RestauranteController extends Controller
                 'message' => 'Restaurante creado con éxito',
                 'data' => $restaurante
             ]);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json([
-                'success' => false,
-                'message' => 'Error al crear el restaurante: ' . $e->getMessage()
-            ], 500);
-        }
     }
 
     // Mostrar formulario de edición
@@ -110,8 +101,6 @@ class RestauranteController extends Controller
     // Actualizar restaurante
     public function update(Request $request, Restaurante $restaurante)
     {
-        DB::beginTransaction();
-        try {
             $request->validate([
                 'nombre_r' => 'required|string|max:75|unique:restaurantes,nombre_r,' . $restaurante->id,
                 'descripcion' => 'nullable|string|max:255',
@@ -146,13 +135,6 @@ class RestauranteController extends Controller
                 'message' => 'Restaurante actualizado con éxito',
                 'data' => $restaurante
             ]);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json([
-                'success' => false,
-                'message' => 'Error al actualizar el restaurante: ' . $e->getMessage()
-            ], 500);
-        }
     }
 
     // Eliminar restaurante
@@ -160,6 +142,9 @@ class RestauranteController extends Controller
     {
         DB::beginTransaction();
         try {
+            // Eliminar valoraciones y comentarios del restaurante
+            Rating::where('restaurante_id', $restaurante->id)->delete();
+
             // Liberar al gerente antes de eliminar el restaurante
             if ($restaurante->manager_id) {
                 $restaurante->manager_id = null;
@@ -171,9 +156,6 @@ class RestauranteController extends Controller
                 unlink(public_path('images/restaurantes/' . $restaurante->imagen));
             }
 
-            // Eliminar valoraciones asociadas
-            Rating::where('restaurante_id', $restaurante->id)->delete();
-            
             // Eliminar restaurante
             $restaurante->delete();
 

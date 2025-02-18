@@ -61,8 +61,6 @@ class AuthController extends Controller
 
     // Maneja el proceso de registro
     public function register(Request $request){
-        DB::beginTransaction();
-        try {
             // Validar los datos del formulario
             $request->validate([
                 'username' => 'required|string|max:30',
@@ -86,13 +84,6 @@ class AuthController extends Controller
             session()->flash('success', "Bienvenido $username!");
             DB::commit();
             return redirect()->route('principal');
-        } catch (\Exception $e) {
-            DB::rollBack();
-            // Manejo del error
-            return back()->withErrors([
-                'email' => 'Hubo un error al procesar el registro. Por favor, inténtelo más tarde.',
-            ]);
-        }
     }
 
 
@@ -219,8 +210,6 @@ class AuthController extends Controller
 
     public function updatePerfil(Request $request)
     {
-        DB::beginTransaction();
-        try {
             $request->validate([
                 'username' => 'required|string|max:30',
                 'email' => 'required|string|email|max:120|unique:usuarios,email,' . Auth::id(),
@@ -234,13 +223,6 @@ class AuthController extends Controller
 
             DB::commit();
             return redirect()->route('perfil')->with('success', 'Perfil actualizado correctamente.');
-        } catch (\Exception $e) {
-            DB::rollBack();
-            // Manejo del error
-            return back()->withErrors([
-                'email' => 'Hubo un error al actualizar el perfil. Por favor, inténtelo más tarde.',
-            ]);
-        }
     }
 
     public function filterRestaurants(Request $request)

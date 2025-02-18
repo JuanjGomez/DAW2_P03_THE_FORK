@@ -49,8 +49,6 @@ class UsuarioController extends Controller
     // Guardar nuevo usuario
     public function store(Request $request)
     {
-        DB::beginTransaction();
-        try {
             $request->validate([
                 'username' => 'required|string|max:30|unique:usuarios',
                 'email' => 'required|email|max:120|unique:usuarios',
@@ -74,13 +72,6 @@ class UsuarioController extends Controller
                 'message' => 'Usuario creado con éxito',
                 'data' => $usuario
             ]);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json([
-                'success' => false,
-                'message' => 'Error al crear el usuario: ' . $e->getMessage()
-            ], 500);
-        }
     }
 
     // Mostrar formulario de edición
@@ -93,8 +84,6 @@ class UsuarioController extends Controller
     // Actualizar usuario
     public function update(Request $request, Usuario $usuario)
     {
-        DB::beginTransaction();
-        try {
             $request->validate([
                 'username' => 'required|string|max:30|unique:usuarios,username,' . $usuario->id,
                 'email' => 'required|email|max:120|unique:usuarios,email,' . $usuario->id,
@@ -124,13 +113,6 @@ class UsuarioController extends Controller
                 'message' => 'Usuario actualizado con éxito',
                 'data' => $usuario
             ]);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json([
-                'success' => false,
-                'message' => 'Error al actualizar el usuario: ' . $e->getMessage()
-            ], 500);
-        }
     }
 
     // Eliminar usuario
@@ -138,11 +120,14 @@ class UsuarioController extends Controller
     {
         DB::beginTransaction();
         try {
+            // Eliminar valoraciones y comentarios del usuario
+            Rating::where('user_id', $usuario->id)->delete();
+
             // Actualizar los restaurantes que tienen este usuario como manager
             Restaurante::where('manager_id', $usuario->id)
                 ->update(['manager_id' => null]);
 
-            // Ahora puedes eliminar el usuario
+            // Eliminar el usuario
             $usuario->delete();
 
             DB::commit();
