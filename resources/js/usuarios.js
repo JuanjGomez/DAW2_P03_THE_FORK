@@ -2,11 +2,130 @@ document.addEventListener('DOMContentLoaded', function() {
     const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
 
     // Crear usuario
-    const crearForm = document.getElementById('crearUsuarioForm');
+    document.getElementById('username').oninput = function() {
+        let username = this.value.trim()
+        let usernameError = ""
+
+        if (username.length === 0 || /^\s+$/.test(username) || username == null) {
+            usernameError = "El nombre de usuario es obligatorio."
+            this.style.border = "2px solid red"
+        } else if (username.length < 3 || username.length > 20) {
+            usernameError = "El nombre de usuario debe tener entre 3 y 20 caracteres."
+            this.style.border = "2px solid red"
+        } else if (!/^[a-zA-Z]+$/.test(username)) {
+            usernameError = "El nombre de usuario solo puede contener letras."
+            this.style.border = "2px solid red"
+        } else {
+            usernameError = ""
+            this.style.border = "2px solid green"
+        }
+
+        document.getElementById("errorUsername").textContent = usernameError
+        verificarForm()
+    }
+
+    document.getElementById("email").oninput = function() {
+        let email = this.value.trim()
+        let emailError = ""
+
+        if (email.length === 0 || /^\s+$/.test(email) || email == null) {
+            emailError = "El email es obligatorio."
+            this.style.border = "2px solid red"
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            emailError = "El email no es válido."
+            this.style.border = "2px solid red"
+        } else {
+            emailError = ""
+            this.style.border = "2px solid green"
+        }
+
+        document.getElementById("errorEmail").textContent = emailError
+        verificarForm()
+    }
+
+    document.getElementById("password").oninput = function() {
+        let password = this.value.trim()
+        let regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
+        let errorPwd = ""
+
+        if (password.length === 0 || /^\s+$/.test(password) || password == null) {
+            errorPwd = "El campo no puede estar vacío."
+            this.style.border = "2px solid red"
+        } else if (!regex.test(password)) {
+            errorPwd = "Debe tener 8 caracteres, mayúscula, minúscula, número y carácter especial."
+            this.style.border = "2px solid red"
+        } else {
+            this.style.border = "2px solid green"
+            errorPwd = ""
+        }
+
+        document.getElementById("errorPassword").textContent = errorPwd
+        verificarForm()
+    }
+
+    document.getElementById("password_confirmation").oninput = function() {
+        let passwordConfirmation = this.value.trim()
+        let password = document.getElementById("password").value.trim()
+        let errorPasswordConfirmation = ""
+
+        if(passwordConfirmation.length === 0 || /^\s+$/.test(passwordConfirmation) || passwordConfirmation == null){
+            errorPasswordConfirmation = "La confirmación de contraseña es obligatoria."
+            this.style.border = "2px solid red"
+        } else if(passwordConfirmation !== password){
+            errorPasswordConfirmation = "Las contraseñas no coinciden."
+            this.style.border = "2px solid red"
+        } else {
+            this.style.border = "2px solid green"
+            errorPasswordConfirmation = ""
+        }
+
+        document.getElementById("errorPasswordConfirmation").textContent = errorPasswordConfirmation
+        verificarForm()
+    }
+
+    document.getElementById("rol_id").onchange = function() {
+        let rolId = this.value.trim()
+        let errorRolId = ""
+
+        if(rolId.length === 0 || /^\s+$/.test(rolId) || rolId == null){
+            errorRolId = "El rol es obligatorio."
+            this.style.border = "2px solid red"
+        } else {
+            this.style.border = "2px solid green"
+            errorRolId = ""
+        }
+
+        document.getElementById("errorRolId").textContent = errorRolId
+        verificarForm()
+    }
+
+    function verificarForm() {
+        let errores = [
+            document.getElementById("errorUsername").textContent,
+            document.getElementById("errorEmail").textContent,
+            document.getElementById("errorPassword").textContent,
+
+        ]
+        let campos = [
+            document.getElementById("username").value.trim(),
+            document.getElementById("email").value.trim(),
+            document.getElementById("password").value.trim(),
+            document.getElementById("password_confirmation").value.trim(),
+            document.getElementById("rol_id").value.trim()
+        ]
+
+        const hayErrores = errores.some(error => error !== "")
+        const camposVacios = campos.some(campo => campo === "")
+
+        document.getElementById('btnCrearUsuario').disabled = hayErrores || camposVacios
+    }
+
     if (crearForm) {
         crearForm.addEventListener('submit', function(e) {
             e.preventDefault();
             const formData = new FormData(this);
+
+            console.log('Form data:', formData);
 
             fetch(this.action, {
                 method: 'POST',
@@ -17,8 +136,11 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .then(response => response.json())
             .then(data => {
+                console.log('Response data:', data);
                 if (data.success) {
                     window.location.href = '/usuarios';
+                } else {
+                    console.error('Error:', data.message);
                 }
             })
             .catch(error => console.error('Error:', error));
@@ -108,6 +230,116 @@ document.addEventListener('DOMContentLoaded', function() {
     // Editar usuario
     const editarForms = document.querySelectorAll('[id^="editarUsuarioForm-"]');
     editarForms.forEach(form => {
+
+        document.getElementById("usernameE").oninput = function() {
+            let username = this.value.trim();
+            let usernameError = "";
+
+            if (username.length === 0 || /^\s+$/.test(username) || username == null) {
+                usernameError = "El nombre de usuario es obligatorio.";
+            } else if (username.length < 3 || username.length > 20) {
+                usernameError = "El nombre de usuario debe tener entre 3 y 20 caracteres.";
+            } else if (!/^[a-zA-Z]+$/.test(username)) {
+                usernameError = "El nombre de usuario solo puede contener letras.";
+            } else {
+                usernameError = "";
+            }
+
+            document.getElementById("errorUsernameE").textContent = usernameError;
+            verificarFormEditar();
+        };
+
+        document.getElementById("emailE").oninput = function() {
+            let email = this.value.trim();
+            let emailError = "";
+
+            if (email.length === 0 || /^\s+$/.test(email) || email == null) {
+                emailError = "El email es obligatorio.";
+            } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                emailError = "El email no es válido.";
+            } else {
+                emailError = "";
+            }
+
+            document.getElementById("errorEmailE").textContent = emailError;
+            verificarFormEditar();
+        };
+
+        document.getElementById("passwordE").oninput = function() {
+            let password = this.value.trim();
+            let regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+            let errorPwd = "";
+
+            if (password.length > 0 && !regex.test(password)) {
+                errorPwd = "Debe tener 8 caracteres, mayúscula, minúscula, número y carácter especial.";
+            } else {
+                errorPwd = "";
+            }
+
+            document.getElementById("errorPasswordE").textContent = errorPwd;
+            verificarFormEditar();
+        }
+
+        document.getElementById("password_confirmationE").oninput = function() {
+            let passwordConfirmation = this.value.trim();
+            let password = document.getElementById("password").value.trim();
+            let errorPasswordConfirmation = "";
+
+            if (password.length > 0 && passwordConfirmation.length === 0) {
+                errorPasswordConfirmation = "La confirmación de contraseña es obligatoria.";
+            } else if (passwordConfirmation !== password) {
+                errorPasswordConfirmation = "Las contraseñas no coinciden.";
+            } else {
+                errorPasswordConfirmation = "";
+            }
+
+            document.getElementById("errorPasswordConfirmationE").textContent = errorPasswordConfirmation;
+            verificarFormEditar();
+        }
+
+        document.getElementById("rol_idE").onchange = function() {
+            let rolId = this.value.trim();
+            let errorRolId = "";
+
+            if (rolId.length === 0 || /^\s+$/.test(rolId) || rolId == null) {
+                errorRolId = "El rol es obligatorio.";
+            } else {
+                errorRolId = "";
+            }
+
+            document.getElementById("errorRolIdE").textContent = errorRolId;
+            verificarFormEditar();
+        };
+
+        function verificarFormEditar() {
+            let errores = [
+                document.getElementById("errorUsernameE").textContent,
+                document.getElementById("errorEmailE").textContent,
+                document.getElementById("errorPasswordE").textContent,
+                document.getElementById("errorPasswordConfirmationE").textContent,
+                document.getElementById("errorRolIdE").textContent
+            ];
+
+            let campos = [
+                document.getElementById("usernameE").value.trim(),
+                document.getElementById("emailE").value.trim(),
+                document.getElementById("rol_idE").value.trim()
+            ];
+
+            const password = document.getElementById("passwordE").value.trim();
+            const passwordConfirmation = document.getElementById("password_confirmationE").value.trim();
+
+            if (password.length > 0) {
+                campos.push(password, passwordConfirmation);
+            }
+
+            const hayErrores = errores.some(error => error !== "");
+            const camposVacios = campos.some(campo => campo === "");
+
+            document.getElementById('btnEditarUsuario').disabled = hayErrores || camposVacios;
+        }
+
+        // Envío del formulario usando fetch
         form.addEventListener('submit', function(e) {
             e.preventDefault();
             const formData = new FormData(this);
@@ -116,42 +348,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 method: 'POST',
                 body: formData,
                 headers: {
-                    'X-CSRF-TOKEN': csrfToken,
-                    'X-HTTP-Method-Override': 'PUT'
+                    'X-CSRF-TOKEN': csrfToken
                 }
             })
-            .then(response => response.text())
-            .then(html => {
-                // Reemplazar el contenido de la página con la nueva vista
-                document.documentElement.innerHTML = html;
-
-                // Mostrar mensaje de éxito
-                Swal.fire({
-                    icon: 'success',
-                    title: '¡Éxito!',
-                    text: 'Usuario actualizado correctamente'
-                });
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = '/usuarios';
+                } else {
+                    console.error('Error:', data.message);
+                }
             })
-            .catch(error => {
-                console.error('Error:', error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Ocurrió un error inesperado'
-                });
-            });
+            .catch(error => console.error('Error:', error));
         });
     });
-
-    // Función para actualizar la tarjeta de un usuario
-    function actualizarTarjetaUsuario(usuario) {
-        const card = document.querySelector(`.card[data-id="${usuario.id}"]`);
-        if (card) {
-            card.querySelector('h2').textContent = usuario.username;
-            card.querySelector('p:nth-of-type(1)').innerHTML = `<strong>Rol:</strong> ${usuario.rol.rol}`;
-            card.querySelector('p:nth-of-type(2)').innerHTML = `<strong>Email:</strong> ${usuario.email}`;
-        }
-    }
 
     // Manejar la apertura del modal de creación
     document.getElementById('crearUsuario').addEventListener('click', function() {
@@ -168,66 +378,4 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    const usernameInput = document.getElementById('username');
-    const emailInput = document.getElementById('email');
-    const passwordInput = document.getElementById('password');
-    const passwordConfirmationInput = document.getElementById('password_confirmation');
-
-    usernameInput.addEventListener('input', function() {
-        validateUsername(this);
-    });
-
-    emailInput.addEventListener('input', function() {
-        validateEmailInput(this);
-    });
-
-    passwordInput.addEventListener('input', function() {
-        validatePassword(this);
-    });
-
-    passwordConfirmationInput.addEventListener('input', function() {
-        validatePasswordConfirmation(this);
-    });
-
-    function validateUsername(input) {
-        const errorSpan = document.getElementById('username-error');
-        if (input.value.trim() === '') {
-            errorSpan.textContent = 'El nombre de usuario es obligatorio.';
-        } else {
-            errorSpan.textContent = '';
-        }
-    }
-
-    function validateEmailInput(input) {
-        const errorSpan = document.getElementById('email-error');
-        if (!validateEmail(input.value)) {
-            errorSpan.textContent = 'Por favor, introduce un email válido.';
-        } else {
-            errorSpan.textContent = '';
-        }
-    }
-
-    function validatePassword(input) {
-        const errorSpan = document.getElementById('password-error');
-        if (input.value.length < 8) {
-            errorSpan.textContent = 'La contraseña debe tener al menos 8 caracteres.';
-        } else {
-            errorSpan.textContent = '';
-        }
-    }
-
-    function validatePasswordConfirmation(input) {
-        const errorSpan = document.getElementById('password-confirmation-error');
-        const passwordInput = document.getElementById('password');
-        if (input.value !== passwordInput.value) {
-            errorSpan.textContent = 'Las contraseñas no coinciden.';
-        } else {
-            errorSpan.textContent = '';
-        }
-    }
-
-    function validateEmail(email) {
-        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return re.test(email);
-    }
 });

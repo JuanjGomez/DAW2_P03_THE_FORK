@@ -96,37 +96,39 @@
                         @csrf
                         <div class="form-group mb-3">
                             <label for="username">Nombre de usuario</label>
-                            <input type="text" name="username" id="username" class="form-control" required oninput="validateUsername(this)">
-                            <span class="error-message" id="username-error"></span>
+                            <input type="text" name="username" id="username" class="form-control">
+                            <span class="error-message" id="errorUsername"></span>
                         </div>
                         <div class="form-group mb-3">
                             <label for="email">Email</label>
-                            <input type="email" name="email" id="email" class="form-control" required oninput="validateEmailInput(this)">
-                            <span class="error-message" id="email-error"></span>
+                            <input type="email" name="email" id="email" class="form-control">
+                            <span class="error-message" id="errorEmail"></span>
                         </div>
                         <div class="form-group mb-3">
                             <label for="password">Contraseña</label>
-                            <input type="password" name="password" id="password" class="form-control" required oninput="validatePassword(this)">
-                            <span class="error-message" id="password-error"></span>
+                            <input type="password" name="password" id="password" class="form-control">
+                            <span class="error-message" id="errorPassword"></span>
                         </div>
                         <div class="form-group mb-3">
                             <label for="password_confirmation">Confirmar Contraseña</label>
-                            <input type="password" name="password_confirmation" id="password_confirmation" class="form-control" required oninput="validatePasswordConfirmation(this)">
-                            <span class="error-message" id="password-confirmation-error"></span>
+                            <input type="password" name="password_confirmation" id="password_confirmation" class="form-control">
+                            <span class="error-message" id="errorPasswordConfirmation"></span>
                         </div>
                         <div class="form-group mb-3">
                             <label for="rol_id">Rol</label>
-                            <select name="rol_id" id="rol_id" class="form-control" required>
+                            <select name="rol_id" id="rol_id" class="form-control">
+                                <option value="" selected disabled>Selecciona un rol</option>
                                 @foreach($roles as $rol)
                                     <option value="{{ $rol->id }}">{{ $rol->rol }}</option>
                                 @endforeach
                             </select>
+                            <span class="error-message" id="errorRolId"></span>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="submit" form="crearUsuarioForm" class="btn btn-primary">Crear Usuario</button>
+                    <button type="submit" form="crearUsuarioForm" class="btn btn-primary" id="btnCrearUsuario" disabled>Crear Usuario</button>
                 </div>
             </div>
         </div>
@@ -147,33 +149,38 @@
                         @method('PUT')
                         <div class="form-group mb-3">
                             <label for="username">Nombre de usuario</label>
-                            <input type="text" name="username" id="username" class="form-control" value="{{ $usuario->username }}" required>
+                            <input type="text" name="username" id="usernameE" class="form-control" value="{{ $usuario->username }}">
+                            <span class="error-message" id="errorUsernameE"></span>
                         </div>
                         <div class="form-group mb-3">
                             <label for="email">Email</label>
-                            <input type="email" name="email" id="email" class="form-control" value="{{ $usuario->email }}" required>
+                            <input type="email" name="email" id="emailE" class="form-control" value="{{ $usuario->email }}">
+                            <span class="error-message" id="errorEmailE"></span>
                         </div>
                         <div class="form-group mb-3">
                             <label for="password">Nueva Contraseña (dejar en blanco para mantener la actual)</label>
-                            <input type="password" name="password" id="password" class="form-control">
+                            <input type="password" name="password" id="passwordE" class="form-control">
+                            <span class="error-message" id="errorPasswordE"></span>
                         </div>
                         <div class="form-group mb-3">
                             <label for="password_confirmation">Confirmar Nueva Contraseña</label>
-                            <input type="password" name="password_confirmation" id="password_confirmation" class="form-control">
+                            <input type="password" name="password_confirmation" id="password_confirmationE" class="form-control">
+                            <span class="error-message" id="errorPasswordConfirmationE"></span>
                         </div>
                         <div class="form-group mb-3">
                             <label for="rol_id">Rol</label>
-                            <select name="rol_id" id="rol_id" class="form-control" required>
+                            <select name="rol_id" id="rol_idE" class="form-control">
                                 @foreach($roles as $rol)
                                     <option value="{{ $rol->id }}" {{ $usuario->rol_id == $rol->id ? 'selected' : '' }}>{{ $rol->rol }}</option>
                                 @endforeach
+                                <span class="error-message" id="errorRolIdE"></span>
                             </select>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="submit" form="editarUsuarioForm-{{ $usuario->id }}" class="btn btn-primary">Guardar Cambios</button>
+                    <button type="submit" form="editarUsuarioForm-{{ $usuario->id }}" class="btn btn-primary" id="btnEditarUsuario" disabled>Guardar Cambios</button>
                 </div>
             </div>
         </div>

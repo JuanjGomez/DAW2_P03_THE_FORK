@@ -40,7 +40,7 @@ document.getElementById("password").oninput = function() {
 
     document.getElementById("errorPwd").textContent = errorPwd
     verificarForm()
-};
+}
 
 
 // Valida si todo el formulario esta bien
