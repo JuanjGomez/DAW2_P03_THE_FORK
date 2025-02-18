@@ -11,6 +11,7 @@ use App\Models\Usuario;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\RestauranteModificado;
 use Illuminate\Support\Facades\Log;
+use App\Models\Rating;
 
 class RestauranteController extends Controller
 {
@@ -50,18 +51,17 @@ class RestauranteController extends Controller
         $municipios = Restaurante::distinct()->pluck('municipio');
         $tiposCocina = TipoCocina::all();
         
-        // Managers para el modal de creación (solo los que no tienen restaurante)
+        // Obtener todos los usuarios con rol de gerente (rol_id = 2)
         $managersDisponibles = Usuario::where('rol_id', 2)
-            ->doesntHave('restaurante')
-            ->get();
-        
-        // Managers para los modales de edición (incluye tanto los disponibles como los ya asignados)
-        $managersEdicion = Usuario::where('rol_id', 2)
-            ->where(function($query) {
-                $query->doesntHave('restaurante')
-                      ->orWhereHas('restaurante');
+            ->whereNotIn('id', function($query) {
+                $query->select('manager_id')
+                      ->from('restaurantes')
+                      ->whereNotNull('manager_id');
             })
             ->get();
+        
+        // Para edición, obtener todos los gerentes
+        $managersEdicion = Usuario::where('rol_id', 2)->get();
 
         return view('admin.restaurantes.index', compact('restaurantes', 'municipios', 'tiposCocina', 'managersDisponibles', 'managersEdicion'));
     }
@@ -109,14 +109,20 @@ class RestauranteController extends Controller
                 'manager_id' => $request->manager_id
             ]);
 
+            // Cargar las relaciones necesarias
+            $restaurante->load(['tipoCocina', 'manager']);
+
             DB::commit();
-            session()->flash('success', 'Restaurante actualizado con éxito');
-            return redirect()->route('restaurantes.index');
+            return response()->json([
+                'success' => true,
+                'message' => 'Restaurante creado con éxito',
+                'data' => $restaurante
+            ]);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
                 'success' => false,
-                'message' => 'Error al crear el restaurante'
+                'message' => 'Error al crear el restaurante: ' . $e->getMessage()
             ], 500);
         }
     }
@@ -139,29 +145,6 @@ class RestauranteController extends Controller
     {
         DB::beginTransaction();
         try {
-            // Dentro del método update, modifica la parte de los cambios
-            $cambios = [];
-            $camposARevisar = ['nombre_r', 'descripcion', 'direccion', 'precio_promedio', 'municipio', 'tipo_cocina_id', 'manager_id'];
-            
-            foreach ($camposARevisar as $campo) {
-                if ($request->has($campo) && $request->$campo != $restaurante->$campo) {
-                    if ($campo === 'tipo_cocina_id') {
-                        $tipoCocinaAnterior = TipoCocina::find($restaurante->tipo_cocina_id);
-                        $tipoCocinaNuevo = TipoCocina::find($request->tipo_cocina_id);
-                        $cambios['tipo de cocina'] = [
-                            'anterior' => $tipoCocinaAnterior ? $tipoCocinaAnterior->nombre : 'No definido',
-                            'nuevo' => $tipoCocinaNuevo ? $tipoCocinaNuevo->nombre : 'No definido'
-                        ];
-                    } else {
-                        $cambios[$campo] = [
-                            'anterior' => $restaurante->$campo,
-                            'nuevo' => $request->$campo
-                        ];
-                    }
-                }
-            }
-
-            // Validación existente...
             $request->validate([
                 'nombre_r' => 'required|string|max:75|unique:restaurantes,nombre_r,' . $restaurante->id,
                 'descripcion' => 'nullable|string|max:255',
@@ -173,41 +156,34 @@ class RestauranteController extends Controller
                 'manager_id' => 'nullable|exists:usuarios,id'
             ]);
 
+            $data = $request->except('imagen');
+
             if ($request->hasFile('imagen')) {
+                // Eliminar imagen anterior
+                if ($restaurante->imagen && file_exists(public_path('images/restaurantes/' . $restaurante->imagen))) {
+                    unlink(public_path('images/restaurantes/' . $restaurante->imagen));
+                }
+                
                 $imagen = $request->file('imagen');
                 $nombreImagen = time() . '.' . $imagen->getClientOriginalExtension();
                 $imagen->move(public_path('images/restaurantes'), $nombreImagen);
-                $restaurante->imagen = $nombreImagen;
-                $cambios['imagen'] = [
-                    'anterior' => 'imagen anterior',
-                    'nuevo' => 'nueva imagen'
-                ];
+                $data['imagen'] = $nombreImagen;
             }
 
-            $restaurante->update($request->except('imagen'));
-
-            // Justo antes del commit, añade un log para debug
-            if (!empty($cambios)) {
-                Log::info('Cambios detectados:', $cambios);
-                if ($restaurante->manager) {
-                    try {
-                        Mail::to($restaurante->manager->email)
-                            ->send(new RestauranteModificado($restaurante, $cambios));
-                        Log::info('Email enviado a: ' . $restaurante->manager->email);
-                    } catch (\Exception $e) {
-                        Log::error('Error enviando email: ' . $e->getMessage());
-                    }
-                }
-            }
+            $restaurante->update($data);
+            $restaurante->load(['tipoCocina', 'manager']);
 
             DB::commit();
-            session()->flash('success', 'Restaurante actualizado con éxito');
-            return redirect()->route('restaurantes.index');
+            return response()->json([
+                'success' => true,
+                'message' => 'Restaurante actualizado con éxito',
+                'data' => $restaurante
+            ]);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
                 'success' => false,
-                'message' => 'Error al actualizar el restaurante'
+                'message' => 'Error al actualizar el restaurante: ' . $e->getMessage()
             ], 500);
         }
     }
@@ -217,13 +193,35 @@ class RestauranteController extends Controller
     {
         DB::beginTransaction();
         try {
+            // Liberar al gerente antes de eliminar el restaurante
+            if ($restaurante->manager_id) {
+                $restaurante->manager_id = null;
+                $restaurante->save();
+            }
+
+            // Eliminar imagen
+            if (file_exists(public_path('images/restaurantes/' . $restaurante->imagen))) {
+                unlink(public_path('images/restaurantes/' . $restaurante->imagen));
+            }
+
+            // Eliminar valoraciones asociadas
+            Rating::where('restaurante_id', $restaurante->id)->delete();
+            
+            // Eliminar restaurante
             $restaurante->delete();
+
             DB::commit();
-            return redirect()->route('restaurantes.index')->with('success', 'Restaurante eliminado con éxito.');
+            return response()->json([
+                'success' => true,
+                'message' => 'Restaurante eliminado con éxito',
+                'data' => ['id' => $restaurante->id]
+            ]);
         } catch (\Exception $e) {
             DB::rollBack();
-            // Manejo del error
-            return redirect()->back()->with('error', 'Error al eliminar el restaurante. Por favor, inténtelo más tarde.');
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al eliminar el restaurante: ' . $e->getMessage()
+            ], 500);
         }
     }
 
