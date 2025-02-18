@@ -76,6 +76,29 @@ function confirmarEliminacion(id) {
 document.addEventListener('DOMContentLoaded', function() {
     // Crear restaurante
     const crearForm = document.getElementById('crearRestauranteForm');
+
+    document.getElementById('nombre_r').oninput = function() {
+        let nombre = this.value.trim();
+        let errorNombre = "";
+
+        if (nombre.length === 0 || /^\s+$/.test(nombre) || nombre == null) {
+            errorNombre = "El nombre es obligatorio.";
+            this.style.border = "2px solid red";
+        } else if(nombre.length < 3 || nombre.length > 50) {
+            errorNombre = "El nombre debe tener al menos 3 caracteres.";
+            this.style.border = "2px solid red";
+        } else {
+            this.style.border = "2px solid green";
+        }
+
+        document.getElementById('errorNombre').textContent = errorNombre;
+        verificarForm();
+    }
+
+    function verificarForm() {
+
+    }
+
     if (crearForm) {
         crearForm.addEventListener('submit', function(e) {
             e.preventDefault();

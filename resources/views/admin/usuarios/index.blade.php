@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
     <!-- Styles / Scripts -->
-    @vite(['resources/css/app.css', 'resources/css/custom.css', 'resources/css/crudUnificado.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css', 'resources/css/custom.css', 'resources/css/crudUnificado.css', 'resources/js/app.js', 'resources/js/usuarios.js'])
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.16.0/dist/sweetalert2.min.css">
     <!-- Agregar meta tag para CSRF -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -83,12 +83,12 @@
                         @csrf
                         <div class="form-group mb-3">
                             <label for="username">Nombre de usuario</label>
-                            <input type="text" name="username" id="username" class="form-control">
+                            <input type="text" name="username" id="usernameCrear" class="form-control">
                             <span class="error-message" id="errorUsername"></span>
                         </div>
                         <div class="form-group mb-3">
                             <label for="email">Email</label>
-                            <input type="email" name="email" id="email" class="form-control">
+                            <input type="email" name="email" id="emailCrear" class="form-control">
                             <span class="error-message" id="errorEmail"></span>
                         </div>
                         <div class="form-group mb-3">
@@ -103,7 +103,7 @@
                         </div>
                         <div class="form-group mb-3">
                             <label for="rol_id">Rol</label>
-                            <select name="rol_id" id="rol_id" class="form-control">
+                            <select name="rol_id" id="rol_idCrear" class="form-control">
                                 <option value="" selected disabled>Selecciona un rol</option>
                                 @foreach($roles as $rol)
                                     <option value="{{ $rol->id }}">{{ $rol->rol }}</option>
@@ -167,7 +167,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="submit" form="editarUsuarioForm-{{ $usuario->id }}" class="btn btn-primary" id="btnEditarUsuario">Guardar Cambios</button>
+                    <button type="submit" form="editarUsuarioForm-{{ $usuario->id }}" class="btn btn-primary btnEditarUsuario">Guardar Cambios</button>
                 </div>
             </div>
         </div>
