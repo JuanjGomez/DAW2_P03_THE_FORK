@@ -348,3 +348,10 @@
         flex-direction: column;
     }
 }
+
+.restaurant-large-image {
+    width: 100%;
+    height: 300px; /* Altura fija para la vista detalle */
+    object-fit: cover;
+    border-radius: 15px;
+}
