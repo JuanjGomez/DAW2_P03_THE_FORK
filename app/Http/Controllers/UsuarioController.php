@@ -54,20 +54,28 @@ class UsuarioController extends Controller
                 'rol_id' => 'required|exists:roles,id',
             ]);
 
-            Usuario::create([
+            $usuario = Usuario::create([
                 'username' => $request->username,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
                 'rol_id' => $request->rol_id,
             ]);
 
+            // Cargar la relación del rol para la respuesta
+            $usuario->load('rol');
+
             DB::commit();
-            session()->flash('success', 'Usuario creadi con éxito');
-            return redirect()->route('usuarios.index');
+            return response()->json([
+                'success' => true,
+                'message' => 'Usuario creado con éxito',
+                'data' => $usuario
+            ]);
         } catch (\Exception $e) {
             DB::rollBack();
-            // Manejo del error
-            return redirect()->back()->with('error', 'Hubo un error al crear el usuario.');
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al crear el usuario: ' . $e->getMessage()
+            ], 500);
         }
     }
 

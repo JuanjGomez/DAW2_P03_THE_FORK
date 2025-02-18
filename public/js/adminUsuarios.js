@@ -113,4 +113,77 @@ document.addEventListener('DOMContentLoaded', function() {
             card.querySelector('p:nth-of-type(2)').innerHTML = `<strong>Email:</strong> ${usuario.email}`;
         }
     }
+
+    // Crear usuario
+    const crearForm = document.getElementById('crearUsuarioForm');
+    if (crearForm) {
+        crearForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const modal = document.getElementById('crearUsuarioModal');
+
+            fetch(this.action, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Cerrar el modal
+                    const bootstrapModal = bootstrap.Modal.getInstance(modal);
+                    bootstrapModal.hide();
+
+                    // Limpiar el formulario
+                    this.reset();
+
+                    // Añadir la nueva tarjeta de usuario
+                    agregarUsuarioALista(data.data);
+
+                    // Mostrar mensaje de éxito
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Éxito!',
+                        text: data.message
+                    });
+                } else {
+                    throw new Error(data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: error.message || 'Ocurrió un error al crear el usuario'
+                });
+            });
+        });
+    }
+
+    // Función para añadir un nuevo usuario a la lista
+    function agregarUsuarioALista(usuario) {
+        const gridContainer = document.querySelector('.grid-container');
+        const card = document.createElement('div');
+        card.className = 'card user-card';
+        card.setAttribute('data-id', usuario.id);
+
+        card.innerHTML = `
+            <div class="user-info">
+                <h2>${usuario.username}</h2>
+                <p><strong>Rol:</strong> ${usuario.rol.rol}</p>
+                <p><strong>Email:</strong> ${usuario.email}</p>
+            </div>
+            <div class="card-actions">
+                <a href="#" class="button edit" data-bs-toggle="modal" data-bs-target="#editarUsuarioModal-${usuario.id}">EDITAR</a>
+                <form id="formEliminar-${usuario.id}" method="POST" action="/usuarios/${usuario.id}">
+                    <button type="button" class="button delete" onclick="confirmarEliminacion('${usuario.id}')">ELIMINAR</button>
+                </form>
+            </div>
+        `;
+
+        gridContainer.insertBefore(card, gridContainer.firstChild);
+    }
 }); 
