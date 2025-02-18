@@ -101,17 +101,22 @@ class UsuarioController extends Controller
             }
 
             $usuario->update($data);
+            
+            // Cargar la relación del rol para la respuesta
+            $usuario->load('rol');
 
             DB::commit();
 
-            // Devuelve la vista actualizada
-            session()->flash('success', 'Usuario actualizado con éxito');
-            return redirect()->route('usuarios.index');
+            return response()->json([
+                'success' => true,
+                'message' => 'Usuario actualizado con éxito',
+                'data' => $usuario
+            ]);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
                 'success' => false,
-                'message' => 'Error al actualizar el usuario'
+                'message' => 'Error al actualizar el usuario: ' . $e->getMessage()
             ], 500);
         }
     }
