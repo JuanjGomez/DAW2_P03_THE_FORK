@@ -14,6 +14,26 @@ class NotificacionSeeder extends Seeder
 
     public function run(): void
     {
-        Notificacion::factory()->count(30)->create();
+        $notificaciones = [
+            [
+                'mensaje' => 'Nuevo rating recibido en La Tagliatella',
+                'sent_at' => now(),
+                'restaurante_id' => 1,
+            ],
+            [
+                'mensaje' => 'Nuevo rating recibido en Sushi Palace',
+                'sent_at' => now(),
+                'restaurante_id' => 2,
+            ],
+            [
+                'mensaje' => 'Nuevo rating recibido en Green Bites',
+                'sent_at' => now(),
+                'restaurante_id' => 3,
+            ],
+        ];
+
+        foreach ($notificaciones as $notificacion) {
+            Notificacion::create($notificacion);
+        }
     }
 }

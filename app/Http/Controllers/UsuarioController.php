@@ -7,6 +7,8 @@ use App\Models\Usuario;
 use App\Models\Rol;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use App\Models\Restaurante;
+use App\Models\Rating;
 
 class UsuarioController extends Controller
 {
@@ -29,6 +31,10 @@ class UsuarioController extends Controller
 
         $usuarios = $query->paginate(10);
         $roles = Rol::all();
+
+        if ($request->ajax()) {
+            return view('admin.usuarios._usuarios_list', compact('usuarios'));
+        }
 
         return view('admin.usuarios.index', compact('usuarios', 'roles'));
     }
@@ -59,14 +65,20 @@ class UsuarioController extends Controller
                 'rol_id' => $request->rol_id,
             ]);
 
+            // Cargar la relación del rol para la respuesta
+            $usuario->load('rol');
+
             DB::commit();
-            session()->flash('success', 'Usuario creadi con éxito');
-            return redirect()->route('usuarios.index');
+            return response()->json([
+                'success' => true,
+                'message' => 'Usuario creado con éxito',
+                'data' => $usuario
+            ]);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
                 'success' => false,
-                'message' => 'Error al crear el usuario'
+                'message' => 'Error al crear el usuario: ' . $e->getMessage()
             ], 500);
         }
     }
@@ -90,21 +102,33 @@ class UsuarioController extends Controller
                 'rol_id' => 'required|exists:roles,id',
             ]);
 
-            $usuario->update([
+            $data = [
                 'username' => $request->username,
                 'email' => $request->email,
-                'password' => $request->password ? Hash::make($request->password) : $usuario->password,
                 'rol_id' => $request->rol_id,
-            ]);
+            ];
+
+            if ($request->password) {
+                $data['password'] = Hash::make($request->password);
+            }
+
+            $usuario->update($data);
+            
+            // Cargar la relación del rol para la respuesta
+            $usuario->load('rol');
 
             DB::commit();
-            session()->flash('success', 'Usuario actualizado con éxito');
-            return redirect()->route('usuarios.index');
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Usuario actualizado con éxito',
+                'data' => $usuario
+            ]);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
                 'success' => false,
-                'message' => 'Error al actualizar el usuario'
+                'message' => 'Error al actualizar el usuario: ' . $e->getMessage()
             ], 500);
         }
     }
@@ -114,18 +138,24 @@ class UsuarioController extends Controller
     {
         DB::beginTransaction();
         try {
+            // Actualizar los restaurantes que tienen este usuario como manager
+            Restaurante::where('manager_id', $usuario->id)
+                ->update(['manager_id' => null]);
+
+            // Ahora puedes eliminar el usuario
             $usuario->delete();
+
             DB::commit();
+
             return response()->json([
                 'success' => true,
-                'message' => 'Usuario eliminado con éxito',
-                'data' => ['id' => $usuario->id]
+                'message' => 'Usuario eliminado correctamente'
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
                 'success' => false,
-                'message' => 'Error al eliminar el usuario'
+                'message' => 'Error al eliminar el usuario: ' . $e->getMessage()
             ], 500);
         }
     }

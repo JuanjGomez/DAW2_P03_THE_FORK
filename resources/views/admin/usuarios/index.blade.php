@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
     <!-- Styles / Scripts -->
-    @vite(['resources/css/app.css', 'resources/css/custom.css', 'resources/css/crudUnificado.css', 'resources/js/app.js', 'resources/js/usuarios.js'])
+    @vite(['resources/css/app.css', 'resources/css/custom.css', 'resources/css/crudUnificado.css', 'resources/js/app.js'])
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.16.0/dist/sweetalert2.min.css">
     <!-- Agregar meta tag para CSRF -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -31,17 +31,18 @@
     </header>
 
     <div class="search-bar">
-        <form action="{{ route('usuarios.index') }}" method="GET">
-            <input type="text" name="username" placeholder="Nombre de usuario..." value="{{ request('username') }}">
-            <input type="text" name="email" placeholder="Email..." value="{{ request('email') }}">
-            <select name="rol_id">
+        <form id="filtroFormUsuarios" action="{{ route('usuarios.index') }}" method="GET">
+            <input type="text" name="username" id="username" placeholder="Nombre de usuario..." value="{{ request('username') }}">
+            <input type="text" name="email" id="email" placeholder="Email..." value="{{ request('email') }}">
+            <select name="rol_id" id="rol_id">
                 <option value="">Rol</option>
                 @foreach($roles as $rol)
                     <option value="{{ $rol->id }}" {{ request('rol_id') == $rol->id ? 'selected' : '' }}>{{ $rol->rol }}</option>
                 @endforeach
             </select>
-            <button type="submit" id="buscarUsuario">BUSCAR</button>
+            <button type="button" id="buscarUsuarioAjax">BUSCAR</button>
             <a href="{{ route('usuarios.index') }}" class="button" id="limpiarFiltros">LIMPIAR FILTROS</a>
+
         </form>
     </div>
 
@@ -50,25 +51,10 @@
         <a href="{{ route('restaurantes.index') }}" class="button" id="verRestaurantes">VER RESTAURANTES</a>
     </div>
 
-    <div class="grid-container" data-url="{{ route('usuarios.index') }}">
-        @foreach($usuarios as $usuario)
-        <div class="card user-card" data-id="{{ $usuario->id }}">
-            <div class="user-info">
-                <h2>{{ $usuario->username }}</h2>
-                <p><strong>Rol:</strong> {{ $usuario->rol->rol }}</p>
-                <p><strong>Email:</strong> {{ $usuario->email }}</p>
-            </div>
-            <div class="card-actions">
-                <a href="#" class="button edit" data-bs-toggle="modal" data-bs-target="#editarUsuarioModal-{{ $usuario->id }}">EDITAR</a>
-                <form id="formEliminar-{{ $usuario->id }}" method="POST" action="{{ route('usuarios.destroy', $usuario->id) }}">
-                    <button type="button" class="button delete" data-bs-toggle="modal" data-bs-target="#eliminarUsuarioModal-{{ $usuario->id }}">ELIMINAR</button>
-                </form>
-            </div>
-        </div>
-        @endforeach
+    <div class="grid-container" id="resultadosUsuarios" data-url="{{ route('usuarios.index') }}">
+        @include('admin.usuarios._usuarios_list', ['usuarios' => $usuarios])
     </div>
 
-    <!-- Paginación -->
     <div class="pagination">
         {{ $usuarios->appends(request()->query())->links('pagination::bootstrap-4') }}
     </div>
@@ -80,7 +66,8 @@
         </script>
     @endif
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.16.0/dist/sweetalert2.all.min.js"></script>
-    <script src="{{ asset('js/usuarios.js') }}"></script>
+    <script src="{{ asset('js/adminUsuarios.js') }}"></script>
+    @vite(['resources/js/usuarios.js'])
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- Modal Crear Usuario -->
@@ -211,14 +198,5 @@
         </div>
     </div>
     @endforeach
-    @if (session('success'))
-    <script>
-        Swal.fire({
-            icon: 'success',
-            title: '¡Éxito!',
-            text: "{{ session('success') }}"
-        });
-    </script>
-    @endif
 </body>
 </html>

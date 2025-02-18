@@ -14,6 +14,7 @@
         </a>
     @endforeach
 </div>
+
 <div class="pagination">
     {{ $restaurantes->appends(request()->query())->links('pagination::bootstrap-4') }}
-</div>
+</div> 

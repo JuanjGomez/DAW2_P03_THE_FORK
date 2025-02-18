@@ -26,7 +26,7 @@
             <a href="{{ route('principal') }}"><img src="{{ asset('images/TheFork.png') }}" alt="Logo de The Fork" class="logo"></a>
         </div>
         <div class="header-right">
-            <form id="filters-form" class="filters">
+        <form id="filters-form" class="filters">
                 <input type="text" name="nombre" id="nombre" placeholder="Nombre" class="filter-input" value="{{ request('nombre') }}">
                 <input type="text" name="tipo_comida" id="tipo_comida" placeholder="Tipo" class="filter-input" value="{{ request('tipo_comida') }}">
                 <div class="price-range">
@@ -92,5 +92,6 @@
     <div class="pagination">
         {{ $restaurantes->appends(request()->query())->links('pagination::bootstrap-4') }}
     </div>
+    @include('partials.footer')
 </body>
 </html>

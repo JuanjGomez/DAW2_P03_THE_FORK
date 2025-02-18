@@ -20,7 +20,8 @@ export default defineConfig({
                 'resources/js/rating.js',
                 'resources/js/createRestaurante.js',
                 'resources/js/restaurantes.js',
-                'resources/js/usuarios.js',
+                'resources/js/restaurantFilters.js',
+                'resources/js/usuarios.js'
             ],
             refresh: true,
         }),

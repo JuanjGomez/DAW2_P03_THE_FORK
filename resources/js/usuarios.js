@@ -124,23 +124,28 @@ document.addEventListener('DOMContentLoaded', function() {
         crearForm.addEventListener('submit', function(e) {
             e.preventDefault();
             const formData = new FormData(this);
-
-            console.log('Form data:', formData);
+            const modal = document.getElementById('crearUsuarioModal');
 
             fetch(this.action, {
                 method: 'POST',
-                body: formData,
                 headers: {
                     'X-CSRF-TOKEN': csrfToken
-                }
+                },
+                body: formData
             })
             .then(response => response.json())
             .then(data => {
                 console.log('Response data:', data);
                 if (data.success) {
-                    window.location.href = '/usuarios';
-                } else {
-                    console.error('Error:', data.message);
+                    // Cerrar el modal
+                    const bootstrapModal = bootstrap.Modal.getInstance(modal);
+                    bootstrapModal.hide();
+
+                    // Limpiar el formulario
+                    this.reset();
+
+                    // Añadir la nueva tarjeta de usuario
+                    agregarUsuarioALista(data.data);
                 }
             })
             .catch(error => console.error('Error:', error));
@@ -343,20 +348,25 @@ document.addEventListener('DOMContentLoaded', function() {
         form.addEventListener('submit', function(e) {
             e.preventDefault();
             const formData = new FormData(this);
+            const modal = document.querySelector(`#editarUsuarioModal-${userId}`);
 
             fetch(this.action, {
                 method: 'POST',
-                body: formData,
                 headers: {
-                    'X-CSRF-TOKEN': csrfToken
-                }
+                    'X-CSRF-TOKEN': csrfToken,
+                    'X-HTTP-Method-Override': 'PUT'
+                },
+                body: formData
             })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    window.location.href = '/usuarios';
-                } else {
-                    console.error('Error:', data.message);
+                    // Cerrar el modal
+                    const bootstrapModal = bootstrap.Modal.getInstance(modal);
+                    bootstrapModal.hide();
+
+                    // Actualizar la tarjeta del usuario
+                    actualizarTarjetaUsuario(data.data);
                 }
             })
             .catch(error => console.error('Error:', error));
@@ -378,4 +388,132 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    const usernameInput = document.getElementById('username');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const passwordConfirmationInput = document.getElementById('password_confirmation');
+
+    usernameInput.addEventListener('input', function() {
+        validateUsername(this);
+    });
+
+    emailInput.addEventListener('input', function() {
+        validateEmailInput(this);
+    });
+
+    passwordInput.addEventListener('input', function() {
+        validatePassword(this);
+    });
+
+    passwordConfirmationInput.addEventListener('input', function() {
+        validatePasswordConfirmation(this);
+    });
+
+    function validateUsername(input) {
+        const errorSpan = document.getElementById('username-error');
+        if (input.value.trim() === '') {
+            errorSpan.textContent = 'El nombre de usuario es obligatorio.';
+        } else {
+            errorSpan.textContent = '';
+        }
+    }
+
+    function validateEmailInput(input) {
+        const errorSpan = document.getElementById('email-error');
+        if (!validateEmail(input.value)) {
+            errorSpan.textContent = 'Por favor, introduce un email válido.';
+        } else {
+            errorSpan.textContent = '';
+        }
+    }
+
+    function validatePassword(input) {
+        const errorSpan = document.getElementById('password-error');
+        if (input.value.length < 8) {
+            errorSpan.textContent = 'La contraseña debe tener al menos 8 caracteres.';
+        } else {
+            errorSpan.textContent = '';
+        }
+    }
+
+    function validatePasswordConfirmation(input) {
+        const errorSpan = document.getElementById('password-confirmation-error');
+        const passwordInput = document.getElementById('password');
+        if (input.value !== passwordInput.value) {
+            errorSpan.textContent = 'Las contraseñas no coinciden.';
+        } else {
+            errorSpan.textContent = '';
+        }
+    }
+
+    function validateEmail(email) {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(email);
+    }
+
+    const buscarBtn = document.getElementById('buscarUsuarioAjax');
+    const limpiarBtn = document.getElementById('limpiarFiltrosUsuarios');
+
+    if (buscarBtn) {
+        buscarBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            aplicarFiltrosUsuarios();
+        });
+    }
+
+    if (limpiarBtn) {
+        limpiarBtn.addEventListener('click', limpiarFiltrosUsuarios);
+    }
+
+    function aplicarFiltrosUsuarios() {
+        const form = document.getElementById('filtroFormUsuarios');
+        const url = form.getAttribute('action');
+        const params = new URLSearchParams(new FormData(form));
+
+        fetch(`${url}?${params.toString()}`, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'text/html'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.text();
+        })
+        .then(html => {
+            document.getElementById('resultadosUsuarios').innerHTML = html;
+            updatePaginationLinksUsuarios();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Hubo un error al realizar la búsqueda');
+        });
+    }
+
+    function limpiarFiltrosUsuarios(e) {
+        e.preventDefault();
+        window.location.href = e.target.href;
+    }
+
+    function updatePaginationLinksUsuarios() {
+        document.querySelectorAll('.pagination a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                fetch(this.href, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'text/html'
+                    }
+                })
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('resultadosUsuarios').innerHTML = html;
+                    updatePaginationLinksUsuarios();
+                })
+                .catch(error => console.error('Error:', error));
+            });
+        });
+    }
 });

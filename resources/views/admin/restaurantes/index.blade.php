@@ -30,17 +30,17 @@
     </header>
 
     <div class="search-bar">
-        <form action="{{ route('restaurantes.index') }}" method="GET">
-            <input type="text" name="nombre" placeholder="Nombre del restaurante..." value="{{ request('nombre') }}">
-            <input type="text" name="tipo_comida" placeholder="Tipo de comida..." value="{{ request('tipo_comida') }}">
-            <input type="text" name="precio" placeholder="Precio" value="{{ request('precio') }}">
-            <select name="municipio">
+        <form id="filtroForm" action="{{ route('restaurantes.index') }}" method="GET">
+            <input type="text" name="nombre" id="nombre" placeholder="Nombre del restaurante..." value="{{ request('nombre') }}">
+            <input type="text" name="tipo_comida" id="tipo_comida" placeholder="Tipo de comida..." value="{{ request('tipo_comida') }}">
+            <input type="text" name="precio" id="precio" placeholder="Precio" value="{{ request('precio') }}">
+            <select name="municipio" id="municipio">
                 <option value="">Municipio</option>
                 @foreach($municipios as $municipio)
                     <option value="{{ $municipio }}" {{ request('municipio') == $municipio ? 'selected' : '' }}>{{ $municipio }}</option>
                 @endforeach
             </select>
-            <button type="submit" id="buscarRestaurante">BUSCAR</button>
+            <button type="button" id="buscarRestauranteAjax">BUSCAR</button>
             <a href="{{ route('restaurantes.index') }}" class="button" id="limpiarFiltros">LIMPIAR FILTROS</a>
         </form>
     </div>
@@ -50,21 +50,8 @@
         <a href="{{ route('usuarios.index') }}" class="button" id="verUsuarios">VER USUARIOS</a>
     </div>
 
-    <div class="grid-container" data-url="{{ route('restaurantes.index') }}">
-        @foreach($restaurantes as $restaurante)
-        <div class="card restaurant-card" data-id="{{ $restaurante->id }}">
-            <h2>{{ $restaurante->nombre_r }}</h2>
-            <img src="{{ asset('images/restaurantes/' . $restaurante->imagen) }}" alt="{{ $restaurante->nombre_r }}">
-            <div class="card-actions">
-                <a href="#" class="button edit" data-bs-toggle="modal" data-bs-target="#editarRestauranteModal-{{ $restaurante->id }}">EDITAR</a>
-                <form id="formEliminar-{{ $restaurante->id }}" method="POST" action="{{ route('restaurantes.destroy', $restaurante->id) }}">
-                    @csrf
-                    @method('DELETE')
-                    <button type="button" class="button delete" onclick="confirmarEliminacion('{{ $restaurante->id }}')">ELIMINAR</button>
-                </form>
-            </div>
-        </div>
-        @endforeach
+    <div class="grid-container" id="resultadosRestaurantes" data-url="{{ route('restaurantes.index') }}">
+        @include('admin.restaurantes._restaurantes_list', ['restaurantes' => $restaurantes])
     </div>
 
     <div class="pagination">
@@ -131,6 +118,17 @@
                             <label for="imagen">IMAGEN</label>
                             <input type="file" id="imagen" name="imagen" class="form-control" accept="image/*" required>
                         </div>
+
+                        <div class="form-group mb-3">
+                            <label for="manager_id">GERENTE</label>
+                            <select id="manager_id" name="manager_id" class="form-control">
+                                <option value="">Seleccionar gerente</option>
+                                @foreach($managersDisponibles as $manager)
+                                    <option value="{{ $manager->id }}">{{ $manager->username }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -195,6 +193,20 @@
                             <input type="file" id="imagen" name="imagen" class="form-control" accept="image/*">
                             <small class="form-text text-muted">Deja en blanco para mantener la imagen actual</small>
                         </div>
+
+                        <div class="form-group mb-3">
+                            <label for="manager_id_{{ $restaurante->id }}">GERENTE</label>
+                            <select id="manager_id_{{ $restaurante->id }}" name="manager_id" class="form-control">
+                                <option value="">Seleccionar gerente</option>
+                                @foreach($managersEdicion as $manager)
+                                    <option value="{{ $manager->id }}" 
+                                        {{ $restaurante->manager_id == $manager->id ? 'selected' : '' }}>
+                                        {{ $manager->username }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -207,4 +219,3 @@
     @endforeach
 </body>
 </html>
-

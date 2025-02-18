@@ -11,91 +11,154 @@ function confirmarEliminacion(id) {
         cancelButtonText: 'Cancelar'
     }).then((result) => {
         if (result.isConfirmed) {
-            // Si el usuario confirma, enviamos el formulario manualmente
-            document.getElementById(`formEliminar-${id}`).submit();
+            const form = document.getElementById(`formEliminar-${id}`);
+            const formData = new FormData(form);
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+
+            fetch(form.action, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken,
+                    'X-HTTP-Method-Override': 'DELETE'
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Eliminar la tarjeta del usuario del DOM
+                    const userCard = document.querySelector(`.user-card[data-id="${id}"]`);
+                    if (userCard) {
+                        userCard.remove();
+                    }
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Eliminado!',
+                        text: data.message
+                    });
+                } else {
+                    throw new Error(data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Hubo un problema al eliminar el usuario.'
+                });
+            });
         }
     });
 
-    // Evita que el formulario se envíe automáticamente
     return false;
 }
 
+// Editar usuario
 document.addEventListener('DOMContentLoaded', function() {
+    const editarForms = document.querySelectorAll('[id^="editarUsuarioForm-"]');
+    editarForms.forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const userId = this.id.split('-')[1];
+            const modal = document.querySelector(`#editarUsuarioModal-${userId}`);
+
+            fetch(this.action, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'X-HTTP-Method-Override': 'PUT'
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Cerrar el modal
+                    const bootstrapModal = bootstrap.Modal.getInstance(modal);
+                    bootstrapModal.hide();
+
+                    // Actualizar la tarjeta del usuario
+                    actualizarTarjetaUsuario(data.data);
+
+                    // Mostrar mensaje de éxito
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Éxito!',
+                        text: data.message
+                    });
+                } else {
+                    throw new Error(data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: error.message || 'Ocurrió un error al actualizar el usuario'
+                });
+            });
+        });
+    });
+
+    // Función para actualizar la tarjeta de un usuario
+    function actualizarTarjetaUsuario(usuario) {
+        const card = document.querySelector(`.user-card[data-id="${usuario.id}"]`);
+        if (card) {
+            card.querySelector('h2').textContent = usuario.username;
+            card.querySelector('p:nth-of-type(1)').innerHTML = `<strong>Rol:</strong> ${usuario.rol.rol}`;
+            card.querySelector('p:nth-of-type(2)').innerHTML = `<strong>Email:</strong> ${usuario.email}`;
+        }
+    }
+
     // Crear usuario
     const crearForm = document.getElementById('crearUsuarioForm');
     if (crearForm) {
         crearForm.addEventListener('submit', function(e) {
             e.preventDefault();
             const formData = new FormData(this);
-            
+            const modal = document.getElementById('crearUsuarioModal');
+
             fetch(this.action, {
                 method: 'POST',
-                body: formData,
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                }
+                },
+                body: formData
             })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // Cerrar el modal de creación
-                    const crearModal = bootstrap.Modal.getInstance(document.getElementById('crearUsuarioModal'));
-                    crearModal.hide();
+                    // Cerrar el modal correctamente
+                    const modalInstance = bootstrap.Modal.getInstance(modal);
+                    if (modalInstance) {
+                        modalInstance.hide();
+                    }
 
                     // Limpiar el formulario
-                    crearForm.reset();
+                    this.reset();
 
-                    // Agregar el nuevo usuario dinámicamente
+                    // Añadir la nueva tarjeta de usuario
                     agregarUsuarioALista(data.data);
+
+                    // Recargar la página para actualizar la lista completa
+                    window.location.reload();
                 } else {
-                    console.error('Error:', data.message);
+                    throw new Error(data.message);
                 }
             })
             .catch(error => {
-                console.error('Error inesperado:', error);
+                console.error('Error:', error);
             });
         });
     }
 
-    // Editar usuario
-    const editarForms = document.querySelectorAll('[id^="editarUsuarioForm-"]');
-    editarForms.forEach(form => {
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const formData = new FormData(this);
-            
-            fetch(this.action, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                    'X-HTTP-Method-Override': 'PUT'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Cerrar el modal de edición
-                    const editarModal = bootstrap.Modal.getInstance(document.getElementById(`editarUsuarioModal-${data.data.id}`));
-                    editarModal.hide();
-
-                    // Actualizar la tarjeta del usuario editado
-                    actualizarTarjetaUsuario(data.data);
-                } else {
-                    console.error('Error:', data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error inesperado:', error);
-            });
-        });
-    });
-
-    // Función para agregar un usuario a la lista
+    // Función para añadir un nuevo usuario a la lista
     function agregarUsuarioALista(usuario) {
         const gridContainer = document.querySelector('.grid-container');
-
-        // Crear la tarjeta del usuario
         const card = document.createElement('div');
         card.className = 'card user-card';
         card.setAttribute('data-id', usuario.id);
@@ -108,40 +171,12 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
             <div class="card-actions">
                 <a href="#" class="button edit" data-bs-toggle="modal" data-bs-target="#editarUsuarioModal-${usuario.id}">EDITAR</a>
-                <form id="formEliminar-${usuario.id}" method="POST" action="{{ route('usuarios.destroy', '${usuario.id}') }}">
+                <form id="formEliminar-${usuario.id}" method="POST" action="/usuarios/${usuario.id}">
                     <button type="button" class="button delete" onclick="confirmarEliminacion('${usuario.id}')">ELIMINAR</button>
                 </form>
             </div>
         `;
 
-        // Agregar el CSRF token y el método DELETE dinámicamente
-        const form = card.querySelector(`#formEliminar-${usuario.id}`);
-        const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
-
-        const csrfInput = document.createElement('input');
-        csrfInput.type = 'hidden';
-        csrfInput.name = '_token';
-        csrfInput.value = csrfToken;
-
-        const methodInput = document.createElement('input');
-        methodInput.type = 'hidden';
-        methodInput.name = '_method';
-        methodInput.value = 'DELETE';
-
-        form.appendChild(csrfInput);
-        form.appendChild(methodInput);
-
-        // Agregar la tarjeta al contenedor
-        gridContainer.prepend(card);
-    }
-
-    // Función para actualizar la tarjeta de un usuario
-    function actualizarTarjetaUsuario(usuario) {
-        const card = document.querySelector(`.card[data-id="${usuario.id}"]`);
-        if (card) {
-            card.querySelector('h2').textContent = usuario.username;
-            card.querySelector('p:nth-of-type(1)').innerHTML = `<strong>Rol:</strong> ${usuario.rol.rol}`;
-            card.querySelector('p:nth-of-type(2)').innerHTML = `<strong>Email:</strong> ${usuario.email}`;
-        }
+        gridContainer.insertBefore(card, gridContainer.firstChild);
     }
 }); 

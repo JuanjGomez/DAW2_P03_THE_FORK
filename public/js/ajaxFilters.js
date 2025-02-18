@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
     const filterInputs = document.querySelectorAll('#filters-form input, #filters-form select');
-    const sortButtons = document.querySelectorAll('.sort-button');
     const restaurantGrid = document.querySelector('.restaurant-grid');
     
     if (!restaurantGrid) {
@@ -16,9 +15,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     let timeoutId;
     
-    // Event listeners para los filtros
     filterInputs.forEach(input => {
-        input.addEventListener('input', function() {
+        input.addEventListener('input', function(e) {
+            e.preventDefault(); // Prevenir el comportamiento por defecto
             clearTimeout(timeoutId);
             timeoutId = setTimeout(() => {
                 applyFilters();
@@ -26,28 +25,16 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Event listeners para los botones de ordenación
-    sortButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            // Remover la clase active de todos los botones
-            sortButtons.forEach(btn => btn.classList.remove('active'));
-            // Añadir la clase active al botón clickeado
-            this.classList.add('active');
-            applyFilters();
-        });
-    });
-
-    function applyFilters() {
+    function applyFilters(pageUrl = null) {
         const formData = new FormData(document.getElementById('filters-form'));
         
-        // Añadir parámetros de ordenación
-        const activeSortButton = document.querySelector('.sort-button.active');
-        if (activeSortButton) {
-            formData.append('sort', activeSortButton.dataset.sort);
-            formData.append('order', activeSortButton.dataset.order);
+        // Si hay una URL de página específica, usar sus parámetros
+        if (pageUrl) {
+            const url = new URL(pageUrl);
+            formData.set('page', url.searchParams.get('page'));
         }
 
-        fetch('/filter-restaurants', {
+        fetch('/restaurantes/filter', {
             method: 'POST',
             headers: {
                 'X-Requested-With': 'XMLHttpRequest',
@@ -55,17 +42,22 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             body: formData
         })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Error en la respuesta del servidor');
-            }
-            return response.text();
-        })
+        .then(response => response.text())
         .then(html => {
-            restaurantGrid.innerHTML = html;
+            const temp = document.createElement('div');
+            temp.innerHTML = html;
+            
+            document.querySelector('.restaurant-grid').innerHTML = temp.querySelector('.restaurant-grid').innerHTML;
+            document.querySelector('.pagination').innerHTML = temp.querySelector('.pagination').innerHTML;
+            
+            // Agregar listeners a los nuevos enlaces de paginación
+            document.querySelectorAll('.pagination a').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    applyFilters(this.href);
+                });
+            });
         })
-        .catch(error => {
-            console.error('Error:', error);
-        });
+        .catch(error => console.error('Error:', error));
     }
 });

@@ -103,15 +103,17 @@
 }
 
 .popular-restaurants {
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 2rem 1rem;
+    padding: 2rem;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    margin: 2rem 0;
 }
 
 .popular-title {
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin-bottom: 1rem;
+    font-size: 1.8rem;
+    color: #333;
+    margin-bottom: 1.5rem;
+    text-align: center;
 }
 
 .logo {
@@ -153,70 +155,58 @@
 
 .restaurant-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-    padding: 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
 }
 
 .restaurant-card {
-    display: flex;
-    background-color: white;
-    border-radius: 0.5rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background: #fff;
+    border-radius: 10px;
     overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
     text-decoration: none;
     color: inherit;
-    transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .restaurant-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
 .restaurant-image {
-    width: 150px;
-    height: 150px;
+    width: 100%;
+    height: 180px;
     object-fit: cover;
 }
 
 .restaurant-info {
     padding: 1rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-
-.restaurant-type {
-    font-size: 0.875rem;
-    color: #666;
 }
 
 .restaurant-name {
-    font-size: 1.25rem;
+    font-size: 1.2rem;
     font-weight: 600;
-    margin: 0.5rem 0;
+    color: #333;
+    margin-bottom: 0.5rem;
 }
 
-.restaurant-address {
-    font-size: 0.875rem;
+.restaurant-type {
+    font-size: 0.9rem;
     color: #666;
     margin-bottom: 0.5rem;
 }
 
 .restaurant-price {
-    font-size: 0.875rem;
+    font-size: 0.9rem;
     color: #666;
     margin-bottom: 0.5rem;
 }
 
 .restaurant-rating {
-    font-size: 0.875rem;
-    color: #f59e0b;
-    text-align: left !important;
-    margin-right: auto !important;
-    width: 100%;
-    display: block;
+    font-size: 0.9rem;
+    color: #ffc107;
+    font-weight: 500;
 }
 
 .user-menu {

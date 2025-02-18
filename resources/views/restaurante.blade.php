@@ -95,5 +95,7 @@
             </div>
         @endforeach
     </div>
+
+    @include('partials.footer')
 </body>
 </html>
