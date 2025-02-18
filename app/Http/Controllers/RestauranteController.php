@@ -196,10 +196,11 @@ class RestauranteController extends Controller
     {
         $query = Restaurante::with(['tipoCocina', 'ratings']);
 
+        // Aplicar filtros existentes
         if ($request->has('nombre') && $request->nombre != '') {
             $query->where('nombre_r', 'like', '%' . $request->nombre . '%');
         }
-
+        
         if ($request->has('tipo_comida') && $request->tipo_comida != '') {
             $query->whereHas('tipoCocina', function($q) use ($request) {
                 $q->where('nombre', 'like', '%' . $request->tipo_comida . '%');
@@ -224,6 +225,16 @@ class RestauranteController extends Controller
                   ->groupBy('restaurante_id')
                   ->havingRaw('AVG(rating) >= ?', [$request->valoracion_min]);
             });
+        }
+
+        // Aplicar ordenación
+        if ($request->has('sort') && $request->has('order')) {
+            if ($request->sort === 'rating') {
+                $query->withAvg('ratings', 'rating')
+                      ->orderBy('ratings_avg_rating', $request->order);
+            } else {
+                $query->orderBy($request->sort, $request->order);
+            }
         }
 
         $restaurantes = $query->paginate(10);
