@@ -20,13 +20,13 @@ class UsuarioSeeder extends Seeder
             [
                 'username' => 'admin',
                 'email' => 'admin@thefork.com',
-                'password' => Hash::make('qweQWE123'),
+                'password' => Hash::make('qweQWE123@'),
                 'rol_id' => 1, // admin
             ],
             [
                 'username' => 'admin2',
                 'email' => 'admin2@thefork.com',
-                'password' => Hash::make('qweQWE123'),
+                'password' => Hash::make('qweQWE123@'),
                 'rol_id' => 1, // admin
             ],
         ];
@@ -36,19 +36,19 @@ class UsuarioSeeder extends Seeder
             [
                 'username' => 'gerente1',
                 'email' => 'gerente1@thefork.com',
-                'password' => Hash::make('qweQWE123'),
+                'password' => Hash::make('qweQWE123@'),
                 'rol_id' => 2, // gerente
             ],
             [
                 'username' => 'gerente2',
                 'email' => 'gerente2@thefork.com',
-                'password' => Hash::make('qweQWE123'),
+                'password' => Hash::make('qweQWE123@'),
                 'rol_id' => 2, // gerente
             ],
             [
                 'username' => 'gerente3',
                 'email' => 'gerente3@thefork.com',
-                'password' => Hash::make('qweQWE123'),
+                'password' => Hash::make('qweQWE123@'),
                 'rol_id' => 2, // gerente
             ],
         ];
@@ -58,31 +58,31 @@ class UsuarioSeeder extends Seeder
             [
                 'username' => 'juanperez',
                 'email' => 'juanperez@example.com',
-                'password' => Hash::make('qweQWE123'),
+                'password' => Hash::make('qweQWE123@'),
                 'rol_id' => 3, // standard
             ],
             [
                 'username' => 'mariagarcia',
                 'email' => 'mariagarcia@example.com',
-                'password' => Hash::make('qweQWE123'),
+                'password' => Hash::make('qweQWE123@'),
                 'rol_id' => 3, // standard
             ],
             [
                 'username' => 'carloslopez',
                 'email' => 'carloslopez@example.com',
-                'password' => Hash::make('qweQWE123'),
+                'password' => Hash::make('qweQWE123@'),
                 'rol_id' => 3, // standard
             ],
             [
                 'username' => 'lauramartinez',
                 'email' => 'lauramartinez@example.com',
-                'password' => Hash::make('qweQWE123'),
+                'password' => Hash::make('qweQWE123@'),
                 'rol_id' => 3, // standard
             ],
             [
                 'username' => 'pedrosanchez',
                 'email' => 'pedrosanchez@example.com',
-                'password' => Hash::make('qweQWE123'),
+                'password' => Hash::make('qweQWE123@'),
                 'rol_id' => 3, // standard
             ],
         ];
