@@ -41,7 +41,8 @@
                 @endforeach
             </select>
             <button type="button" id="buscarUsuarioAjax">BUSCAR</button>
-            <a href="{{ route('usuarios.index') }}" class="button" id="limpiarFiltrosUsuarios">LIMPIAR FILTROS</a>
+            <a href="{{ route('usuarios.index') }}" class="button" id="limpiarFiltros">LIMPIAR FILTROS</a>
+
         </form>
     </div>
 
