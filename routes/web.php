@@ -54,4 +54,4 @@ Route::match(['post', 'put'], '/restaurante/{id}/rate', [AuthController::class, 
 
 Route::put('/perfil', [AuthController::class, 'updatePerfil'])->name('perfil.update');
 
-Route::post('/filter-restaurants', [RestauranteController::class, 'filterRestaurants'])->name('filter.restaurants');
+Route::match(['get', 'post'], '/restaurantes/filter', [RestauranteController::class, 'filterRestaurants'])->name('restaurantes.filter');

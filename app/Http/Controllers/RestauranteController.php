@@ -194,29 +194,43 @@ class RestauranteController extends Controller
 
     public function filterRestaurants(Request $request)
     {
-        $query = Restaurante::query();
+        $query = Restaurante::with(['tipoCocina', 'ratings']);
 
         if ($request->has('nombre') && $request->nombre != '') {
             $query->where('nombre_r', 'like', '%' . $request->nombre . '%');
         }
 
         if ($request->has('tipo_comida') && $request->tipo_comida != '') {
-            $query->whereHas('tipoCocina', function ($q) use ($request) {
+            $query->whereHas('tipoCocina', function($q) use ($request) {
                 $q->where('nombre', 'like', '%' . $request->tipo_comida . '%');
             });
         }
 
-        if ($request->has('precio') && $request->precio != '') {
-            $query->where('precio_promedio', '<=', $request->precio);
+        if ($request->has('precio_min') && $request->precio_min != '') {
+            $query->where('precio_promedio', '>=', $request->precio_min);
+        }
+
+        if ($request->has('precio_max') && $request->precio_max != '') {
+            $query->where('precio_promedio', '<=', $request->precio_max);
         }
 
         if ($request->has('municipio') && $request->municipio != '') {
             $query->where('municipio', $request->municipio);
         }
 
+        if ($request->has('valoracion_min') && $request->valoracion_min != '') {
+            $query->whereHas('ratings', function($q) use ($request) {
+                $q->select('restaurante_id')
+                  ->groupBy('restaurante_id')
+                  ->havingRaw('AVG(rating) >= ?', [$request->valoracion_min]);
+            });
+        }
+
         $restaurantes = $query->paginate(10);
 
-        return view('admin.restaurantes.partials.restaurant-grid', compact('restaurantes'))->render();
+        return view('partials.restaurant_list', [
+            'restaurantes' => $restaurantes->appends($request->all())
+        ])->render();
     }
 
     protected function applyFilters(Request $request)
