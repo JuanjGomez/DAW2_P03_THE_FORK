@@ -1,4 +1,4 @@
-# 🎬 DAW2_P03_THE_FORK
+# DAW2_P03_THE_FORK
 
 ### 👥 Miembros del Equipo
 - Àngel Camps Ruíz
