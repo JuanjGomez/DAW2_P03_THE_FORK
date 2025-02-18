@@ -180,7 +180,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="submit" form="editarUsuarioForm-{{ $usuario->id }}" class="btn btn-primary" id="btnEditarUsuario" disabled>Guardar Cambios</button>
+                    <button type="submit" form="editarUsuarioForm-{{ $usuario->id }}" class="btn btn-primary" id="btnEditarUsuario">Guardar Cambios</button>
                 </div>
             </div>
         </div>
