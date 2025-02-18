@@ -1,4 +1,4 @@
-# DAW2_P03_THE_FORK
+# 🎬 DAW2_P03_THE_FORK
 
 ### 👥 Miembros del Equipo
 - Àngel Camps Ruíz
@@ -58,6 +58,7 @@ Este proyecto transversal es una aplicación web desarrollada como parte del mó
 
 ### 🔧 Tecnologías Utilizadas
 - **Laravel:** Framework de PHP para el backend
+- **CSS:** Estilos de la aplicación
 - **Blade:** Motor de plantillas de Laravel
 - **JavaScript:** Interactividad en el frontend
 - **MySQL:** Base de datos relacional
