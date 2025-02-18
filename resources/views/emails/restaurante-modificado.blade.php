@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Cambios en tu restaurante</title>
+    <title>Restaurante Modificado</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -11,59 +11,64 @@
             margin: 0 auto;
             padding: 20px;
         }
-        .header {
-            background-color: #4A5568;
-            color: white;
-            padding: 20px;
-            text-align: center;
-            border-radius: 5px;
+        h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
         }
-        .content {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 5px;
+        h2 {
+            color: #2980b9;
             margin-top: 20px;
         }
-        .changes-list {
-            list-style: none;
+        ul {
+            list-style-type: none;
             padding: 0;
         }
-        .change-item {
-            background: white;
-            padding: 15px;
-            margin: 10px 0;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        li {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
         }
-        .field-name {
-            color: #4A5568;
-            font-weight: bold;
+        strong {
+            color: #2c3e50;
         }
-        .change-values {
-            margin-top: 5px;
-            color: #666;
+        .footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            color: #7f8c8d;
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>Actualización de Restaurante</h1>
-    </div>
+    <h1>Se han realizado cambios en el restaurante {{ $restaurante->nombre_r }}</h1>
     
-    <div class="content">
-        <h2>Se han realizado cambios en {{ $restaurante->nombre_r }}</h2>
-        
-        <ul class="changes-list">
-        @foreach($cambios as $campo => $valores)
-            <li class="change-item">
-                <div class="field-name">{{ ucfirst($campo) }}</div>
-                <div class="change-values">
-                    <div>Anterior: {{ $valores['anterior'] }}</div>
-                    <div>Nuevo: {{ $valores['nuevo'] }}</div>
-                </div>
+    <h2>Cambios realizados:</h2>
+    <ul>
+    @foreach($cambios as $campo => $valor)
+        @if($campo !== 'updated_at' && $campo !== 'created_at')
+            <li>
+                <strong>{{ ucfirst($campo) }}:</strong> 
+                @if(is_array($valor))
+                    {{ json_encode($valor) }}
+                @else
+                    {{ $valor }}
+                @endif
             </li>
-        @endforeach
-        </ul>
+        @endif
+    @endforeach
+    </ul>
+
+    <h2>Datos actuales del restaurante:</h2>
+    <ul>
+        <li><strong>Nombre:</strong> {{ $restaurante->nombre_r }}</li>
+        <li><strong>Dirección:</strong> {{ $restaurante->direccion ?? 'No especificada' }}</li>
+        <li><strong>Municipio:</strong> {{ $restaurante->municipio ?? 'No especificado' }}</li>
+        <li><strong>Precio promedio:</strong> {{ $restaurante->precio_promedio }}€</li>
+        <li><strong>Tipo de cocina:</strong> {{ $restaurante->tipoCocina->nombre }}</li>
+    </ul>
+
+    <div class="footer">
+        <p>Por favor, revisa los cambios realizados en el sistema.</p>
     </div>
 </body>
 </html> 

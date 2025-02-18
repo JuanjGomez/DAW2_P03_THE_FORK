@@ -101,6 +101,8 @@ class RestauranteController extends Controller
     // Actualizar restaurante
     public function update(Request $request, Restaurante $restaurante)
     {
+        DB::beginTransaction();
+        try {
             $request->validate([
                 'nombre_r' => 'required|string|max:75|unique:restaurantes,nombre_r,' . $restaurante->id,
                 'descripcion' => 'nullable|string|max:255',
@@ -112,6 +114,8 @@ class RestauranteController extends Controller
                 'manager_id' => 'nullable|exists:usuarios,id'
             ]);
 
+            // Guardar datos antiguos para comparar cambios
+            $oldData = $restaurante->toArray();
             $data = $request->except('imagen');
 
             if ($request->hasFile('imagen')) {
@@ -129,12 +133,30 @@ class RestauranteController extends Controller
             $restaurante->update($data);
             $restaurante->load(['tipoCocina', 'manager']);
 
+            // Detectar cambios
+            $cambios = array_diff_assoc($restaurante->toArray(), $oldData);
+            
+            // Enviar correo al manager si hay cambios
+            if (!empty($cambios) && $restaurante->manager) {
+                Mail::to($restaurante->manager->email)
+                    ->send(new RestauranteModificado($restaurante, $cambios));
+            }
+
             DB::commit();
             return response()->json([
                 'success' => true,
                 'message' => 'Restaurante actualizado con éxito',
                 'data' => $restaurante
             ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error al actualizar restaurante: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al actualizar el restaurante: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     // Eliminar restaurante
@@ -182,7 +204,7 @@ class RestauranteController extends Controller
         if ($request->has('nombre') && $request->nombre != '') {
             $query->where('nombre_r', 'like', '%' . $request->nombre . '%');
         }
-        
+
         if ($request->has('tipo_comida') && $request->tipo_comida != '') {
             $query->whereHas('tipoCocina', function($q) use ($request) {
                 $q->where('nombre', 'like', '%' . $request->tipo_comida . '%');
