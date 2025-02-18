@@ -7,6 +7,8 @@ use App\Models\Usuario;
 use App\Models\Rol;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use App\Models\Restaurante;
+use App\Models\Rating;
 
 class UsuarioController extends Controller
 {
@@ -119,7 +121,18 @@ class UsuarioController extends Controller
     {
         DB::beginTransaction();
         try {
+            // Si el usuario es gerente, actualizar el restaurante
+            if ($usuario->rol_id == 2) {
+                Restaurante::where('manager_id', $usuario->id)
+                    ->update(['manager_id' => null]);
+            }
+
+            // Eliminar las valoraciones del usuario
+            Rating::where('user_id', $usuario->id)->delete();
+
+            // Eliminar el usuario
             $usuario->delete();
+
             DB::commit();
             return response()->json([
                 'success' => true,
@@ -128,8 +141,10 @@ class UsuarioController extends Controller
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
-            // Manejo del error
-            return redirect()->back()->with('error', 'Hubo un error al eliminar el usuario.');
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al eliminar el usuario: ' . $e->getMessage()
+            ], 500);
         }
     }
 }

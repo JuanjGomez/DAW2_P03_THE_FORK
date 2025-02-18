@@ -11,11 +11,46 @@ function confirmarEliminacion(id) {
         cancelButtonText: 'Cancelar'
     }).then((result) => {
         if (result.isConfirmed) {
-            // Si el usuario confirma, enviamos el formulario manualmente
-            document.getElementById(`formEliminar-${id}`).submit();
+            const form = document.getElementById(`formEliminar-${id}`);
+            const formData = new FormData(form);
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+
+            fetch(form.action, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken,
+                    'X-HTTP-Method-Override': 'DELETE'
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Eliminar la tarjeta del usuario del DOM
+                    const userCard = document.querySelector(`.user-card[data-id="${id}"]`);
+                    if (userCard) {
+                        userCard.remove();
+                    }
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Eliminado!',
+                        text: data.message
+                    });
+                } else {
+                    throw new Error(data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Hubo un problema al eliminar el usuario.'
+                });
+            });
         }
     });
 
-    // Evita que el formulario se envíe automáticamente
     return false;
 } 

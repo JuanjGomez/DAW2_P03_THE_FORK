@@ -80,7 +80,7 @@
         </script>
     @endif
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.16.0/dist/sweetalert2.all.min.js"></script>
-    <script src="{{ asset('js/usuarios.js') }}"></script>
+    <script src="{{ asset('js/adminUsuarios.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- Modal Crear Usuario -->
