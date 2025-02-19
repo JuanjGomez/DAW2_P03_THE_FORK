@@ -24,16 +24,6 @@ class RestauranteSeeder extends Seeder
                 'manager_id' => 1,
             ],
             [
-                'nombre_r' => 'Asador Etxebarri',
-                'descripcion' => 'Especializado en parrilla con ingredientes de alta calidad.',
-                'direccion' => 'Plaza San Juan, 1',
-                'precio_promedio' => 180.00,
-                'imagen' => 'asador_etxebarri.jpg',
-                'municipio' => 'Atxondo',
-                'tipo_cocina_id' => 5, // Tradicional
-                'manager_id' => 2,
-            ],
-            [
                 'nombre_r' => 'DiverXO',
                 'descripcion' => 'Experiencia gastronómica vanguardista y sorprendente.',
                 'direccion' => 'NH Collection Eurobuilding, C/ Padre Damián, 23',
