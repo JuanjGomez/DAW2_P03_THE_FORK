@@ -106,19 +106,21 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById("errorPassword").textContent,
             document.getElementById("errorPasswordConfirmation").textContent,
             document.getElementById("errorRolId").textContent
-        ]
+        ];
+        
         let campos = [
             document.getElementById("usernameCrear").value.trim(),
             document.getElementById("emailCrear").value.trim(),
             document.getElementById("password").value.trim(),
             document.getElementById("password_confirmation").value.trim(),
-            document.getElementById("rol_idCrear").value.trim()
-        ]
+            document.getElementById("rol_idCrear").value
+        ];
 
-        const hayErrores = errores.some(error => error !== "")
-        const camposVacios = campos.some(campo => campo === "")
+        const hayErrores = errores.some(error => error !== "");
+        const camposVacios = campos.some(campo => campo === "");
 
-        document.getElementById('btnCrearUsuario').disabled = hayErrores || camposVacios
+        // Solo deshabilitar si hay errores o campos vacíos
+        document.getElementById('btnCrearUsuario').disabled = hayErrores || camposVacios;
     }
 
     const crearForm = document.getElementById('crearUsuarioForm');
